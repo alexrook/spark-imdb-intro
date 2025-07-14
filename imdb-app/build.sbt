@@ -56,4 +56,4 @@ assembly / assemblyMergeStrategy := {
   case x                                                   => MergeStrategy.defaultMergeStrategy(x)
 }
 
-assembly / mainClass := Some("ru.neofex.imdbApp.Main")
+//assembly / mainClass := Some("ru.neofex.imdbApp.SimpleApp")
