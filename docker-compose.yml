@@ -45,6 +45,7 @@ services:
     volumes:
       - ./imdb-app/target/scala-2.12/spark-imdb-app-assembly-0.0.1.jar:/opt/apps/imdb-app.jar
       - ./app-vol:/var/tmp/data
+    scale: 2
 
   spark-submit-imdb:
     build: imdb-app/.
@@ -63,3 +64,4 @@ services:
       --class ru.neoflex.imdbApp.SimpleApp
       --master spark://spark-master:7077 
       --deploy-mode cluster /opt/apps/imdb-app.jar
+
