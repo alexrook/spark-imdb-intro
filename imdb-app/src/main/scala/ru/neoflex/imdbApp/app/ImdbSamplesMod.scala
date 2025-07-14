@@ -48,48 +48,78 @@ object ImdbSamplesMod {
 
     titleRatingsSample.show(20)
 
-    // write(titleRatingsSample, samplesDir, "title.rating.sample")(identity)
+    write(titleRatingsSample, samplesDir, "title.rating.sample")(identity)
 
     //я хочу фильмы только с рейтингом
     val titlesBasicWithRating: Dataset[TitleBasicsItem] =
       imdbDataSets.titleBasicsDataset
         .filter(!_.titleType.contains("tvEpisode")) //и не сериалы
-        .join(titleRatingsSample, "tconst")
+        .join(broadcast(titleRatingsSample), "tconst")
         .drop("averageRating", "numVotes", "rowNum")
         .as[TitleBasicsItem]
         .cache()
 
     titlesBasicWithRating.show(20)
 
-    // write(titlesBasicWithRating, samplesDir, "title.basic.sample") {
-    //   item: TitleBasicsItem =>
-    //     TitleBasicsRow(
-    //       tconst = item.tconst,
-    //       titleType = item.titleType,
-    //       primaryTitle = item.primaryTitle,
-    //       originalTitle = item.originalTitle,
-    //       isAdult = item.isAdult.map {
-    //         case true => 1
-    //         case _    => 0
-    //       },
-    //       startYear = item.startYear,
-    //       endYear = item.endYear,
-    //       runtimeMinutes = item.runtimeMinutes,
-    //       genres = item.genres.mkString(",")
-    //     )
-    // }
+    write(titlesBasicWithRating, samplesDir, "title.basic.sample") {
+      item: TitleBasicsItem =>
+        TitleBasicsRow(
+          tconst = item.tconst,
+          titleType = item.titleType,
+          primaryTitle = item.primaryTitle,
+          originalTitle = item.originalTitle,
+          isAdult = item.isAdult.map {
+            case true => 1
+            case _    => 0
+          },
+          startYear = item.startYear,
+          endYear = item.endYear,
+          runtimeMinutes = item.runtimeMinutes,
+          genres = item.genres.mkString(",")
+        )
+    }
 
-    val titlePrincipalsSamples =
-      titlesBasicWithRating
+    val titlePrincipalsSamples: Dataset[TitlePrincipalsItem] =
+      imdbDataSets.titlePrincipalsDataset
         .join(
-          imdbDataSets.titlePrincipalsDataset,
-          "tconst",
-          "inner"
+          broadcast(titlesBasicWithRating),
+          "tconst"
+        )
+        .withColumn( //берем от каждого фильма >
+          "rowNum",
+          row_number().over(Window.partitionBy(col("tconst")).orderBy("nconst"))
+        )
+        .filter(
+          col("rowNum") < 3 //только по 2 principals
         )
         .as[TitlePrincipalsItem]
         .cache()
 
+    titlePrincipalsSamples.show(40)
     write(titlePrincipalsSamples, samplesDir, "title.principals")(identity)
+
+    val nameBasicSamples: Dataset[NameBasicItem] =
+      imdbDataSets.nameBasicsDataset
+        .join(
+          broadcast(titlePrincipalsSamples),
+          "nconst"
+        )
+        .as[NameBasicItem]
+        .cache()
+
+    nameBasicSamples.show(40)
+
+    write(nameBasicSamples, samplesDir, "name.basics") {
+      case item: NameBasicItem =>
+        NameBasicRow(
+          nconst = item.nconst,
+          primaryName = item.primaryName,
+          birthYear = item.birthYear,
+          deathYear = item.deathYear,
+          primaryProfession = item.primaryProfession.mkString(","),
+          knownForTitles = item.knownForTitles.mkString(",")
+        )
+    }
 
     println("==========Samples generation done==============")
 
@@ -112,6 +142,7 @@ object ImdbSamplesMod {
 
     def write(delimiter: String, fileExt: String): Unit =
       datasetA
+        .repartition(1) //сведение в одну partition для удобного чтения tsv
         .map(f)
         .write
         .mode("overwrite")
