@@ -2,11 +2,13 @@ name := "spark-imdb-app"
 
 import Dependency._
 
-libraryDependencies ++= loggingLibs.map(_ % "provided")
-libraryDependencies ++= SparkLibs.sparkCoreDeps.map(_ % "provided")
+libraryDependencies ++= loggingLibs //.map(_ % "provided")
+libraryDependencies ++= sparkLibs.sparkCoreDeps.map(_ % "provided")
+libraryDependencies ++= scoptLibs
 libraryDependencies ++= pureConfigLibs
 //Tests
 libraryDependencies ++= scalaTestLibs
+libraryDependencies ++= sparkLibs.sparkTestLibs
 
 // Добавляем к проекту настройки BuildInfo
 enablePlugins(BuildInfoPlugin)
