@@ -1,37 +1,70 @@
 package ru.neoflex.imdbApp
 
-import pureconfig._
-import pureconfig.generic.auto._
+import com.typesafe.config._
 import org.apache.logging.log4j.LogManager
+import pureconfig._
+import pureconfig.error.ConfigReaderFailures
+import pureconfig.error.ThrowableFailure
+import pureconfig.generic.auto._
 
 import scala.util.Properties
-import com.typesafe.config._
 
 object Boot {
   import ru.neoflex.imdbApp.models.config._
   import ru.neoflex.imdbApp.buildinfo.BuildInfo
-  import ru.neoflex.imdbApp.app.ImdbStatsApp
+  import ru.neoflex.imdbApp.app._
+  import ru.neoflex.imdbApp.cli._
 
   val log = LogManager.getLogger(Boot.getClass())
 
+  implicit val appModuleConfigReader
+    : ConfigReader[AppModulesEnum.AppModulesType] =
+    ConfigReader.fromString[AppModulesEnum.AppModulesType](
+      ConvertHelpers.catchReadError(str => AppModulesEnum.withName(s = str))
+    )
+
+  implicit val appModuleConfigWriter
+    : ConfigWriter[AppModulesEnum.AppModulesType] =
+    ConfigWriter[String].contramap[AppModulesEnum.AppModulesType](_.toString())
+
   def main(args: Array[String]): Unit = {
     logBootHeader(args)
+
     (for {
 
       rawCfg <- ConfigSource.default.config()
-      _ = logConfig(rawCfg)
+      _ = logConfig(rawCfg, "The loaded config")
 
-      appCfg <- ConfigSource.fromConfig(rawCfg).at("app").load[AppConfig]
+      cfgFromLoader <- ConfigSource.fromConfig(rawCfg).at("app").load[AppConfig]
+
+      mergedWithCommandLineAppCfg <-
+        loadAppConfig(args = args, init = cfgFromLoader).left.map { ex =>
+          ConfigReaderFailures(ThrowableFailure(ex, None))
+        }
+
+      _ = logConfig(
+        ConfigWriter[AppConfig].to(mergedWithCommandLineAppCfg).atPath("app"),
+        "The harvested app config"
+      )
 
     } yield {
 
-      ImdbStatsApp.run(appCfg)
+      mergedWithCommandLineAppCfg.runModule match {
+
+        case AppModulesEnum.Main =>
+          ImdbStatsMod.run(mergedWithCommandLineAppCfg)
+
+        case AppModulesEnum.Samples =>
+          ImdbSamplesMod.run(mergedWithCommandLineAppCfg)
+
+      }
+
       log.debug("imdb statistics application completed")
 
     }).left
       .foreach { ex =>
         log.error(
-          "An error[{}] occurred while reading application config",
+          "An error[{}] occurred while starting application, exit",
           ex.prettyPrint()
         )
         System.exit(-1)
@@ -53,14 +86,16 @@ object Boot {
 
   }
 
-  def logConfig(config: Config): Unit = {
-    val renderOptions = ConfigRenderOptions
-      .defaults()
-      .setOriginComments(false)
-      .setComments(false)
-      .setFormatted(true)
+  def logConfig(config: Config, info: String): Unit = {
+    val renderOptions: ConfigRenderOptions =
+      ConfigRenderOptions
+        .defaults()
+        .setOriginComments(false)
+        .setComments(false)
+        .setFormatted(true)
+
     log.debug(
-      "The following application configuration will be used[{}]",
+      s"$info[{}]",
       config.root().render(renderOptions)
     )
   }

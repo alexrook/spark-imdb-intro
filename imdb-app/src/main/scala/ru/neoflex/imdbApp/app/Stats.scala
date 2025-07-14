@@ -18,8 +18,8 @@ object Stats {
   def topNByGenre(
     genre:        String,
     topN:         Int,
-    titleRatings: Dataset[TitleRatingItem],
-    titleBasic:   Dataset[TitleBasicsItem]
+    titleBasic:   Dataset[TitleBasicsItem],
+    titleRatings: Dataset[TitleRatingItem]
   ) = {
     //TODO: WARN WindowExec: No Partition Defined for Window operation! Moving all data to a single partition, this can cause serious performance degradation.
     val window = Window.orderBy(col("averageRating").desc)

@@ -1,9 +1,10 @@
 package ru.neoflex.imdbApp.app
 
-object ImdbStatsApp {
+import org.apache.spark.sql.SparkSession
 
-  import org.apache.spark.sql.SparkSession
-
+object ImdbStatsMod {
+  
+  import ru.neoflex.imdbApp.dataset._
   import ru.neoflex.imdbApp.models.config.AppConfig
 
   def run(appConfig: AppConfig): Unit = {
@@ -20,8 +21,8 @@ object ImdbStatsApp {
       .topNByGenre(
         genre = "Fantasy",
         topN = 114,
-        titleRatings = titleRatingsDataset,
-        titleBasic = titleBasicsDataset
+        titleBasic = titleBasicsDataset,
+        titleRatings = titleRatingsDataset
       )
     //   .show(500)
 
