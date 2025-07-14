@@ -1,4 +1,4 @@
-package ru.neoflex.imdbApp.kryo
+package ru.neoflex.imdbApp.app.udf
 
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
@@ -8,6 +8,7 @@ import org.apache.spark.serializer.KryoSerializer
 import org.apache.spark.sql.TypedColumn
 import java.util.{ List => JList, ArrayList }
 import scala.collection.mutable.ListBuffer
+import org.apache.log4j.LogManager
 
 object StringArrayAggregator
     extends Aggregator[String, ListBuffer[String], String] {
@@ -39,18 +40,13 @@ object StringArrayAggregator
   def outputEncoder: Encoder[String] = Encoders.STRING
 }
 
-object KryoEx3 {
+object UdafTypedExample {
 
-  def main(args: Array[String]): Unit = {
-    val spark = SparkSession
-      .builder()
-      .master("local[*]")
-      .appName("Kryo Serialization Example")
-      .config("spark.kryo.registrationRequired", true)
-      .config("spark.serializer", classOf[KryoSerializer].getName())
-      .config("spark.kryo.registrator", classOf[KryoReg].getName())
-      .getOrCreate()
+  val log = LogManager.getLogger(UdafExample.getClass())
 
+  def run(spark: SparkSession): Unit = {
+
+    log.debug("Running UdafExample")
     import spark.implicits._
 
     val data = Seq("Alice", "Bob", "Catherine", "David").toDS()

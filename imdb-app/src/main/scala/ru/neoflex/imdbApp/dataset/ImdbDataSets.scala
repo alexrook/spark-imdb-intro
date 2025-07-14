@@ -7,9 +7,8 @@ import org.apache.spark.sql.execution.columnar.compression.Encoder
 
 final case class ImdbDataSets(
   datasetDir:    String,
-  datasetFileEx: String,
-  spark:         SparkSession
-) {
+  datasetFileEx: String
+)(spark:         SparkSession) {
   import ru.neoflex.imdbApp.models._
 
   import spark.implicits._

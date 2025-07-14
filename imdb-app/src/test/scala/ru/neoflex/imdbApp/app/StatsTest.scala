@@ -1,4 +1,4 @@
-package ru.neoflex.imdbApp.app
+package ru.neoflex.imdbApp.app.stats
 
 import com.holdenkarau.spark.testing.DatasetSuiteBase
 import org.apache.spark.sql.DataFrame
@@ -24,8 +24,7 @@ class StatsTest extends AnyWordSpec with DatasetSuiteBase with SamplesDatasets {
 
       "return topNByGenre correctly" in {
         val actual =
-          Stats
-            .topNByGenre(
+          Stats.topNByGenre(
               genre = "Comedy",
               topN = 20,
               titleBasic = imdbDataSetSamples.titleBasicsDataset,
@@ -52,8 +51,7 @@ class StatsTest extends AnyWordSpec with DatasetSuiteBase with SamplesDatasets {
       "return averageRatingsByGenre correctly" in {
 
         val actual: Dataset[Row] =
-          Stats
-            .averageRatingsByGenre(
+          Stats.averageRatingsByGenre(
               titleRatings = imdbDataSetSamples.titleRatingsDataset,
               titleBasic = imdbDataSetSamples.titleBasicsDataset
             )(spark)
@@ -71,8 +69,7 @@ class StatsTest extends AnyWordSpec with DatasetSuiteBase with SamplesDatasets {
       "return ratingCount correctly" in {
 
         val actual: Dataset[Row] =
-          Stats
-            .ratingCount(titleRatings = imdbDataSetSamples.titleRatingsDataset)
+          Stats.ratingCount(titleRatings = imdbDataSetSamples.titleRatingsDataset)
             .cache()
 
         actual.show(100)
@@ -116,8 +113,7 @@ class StatsTest extends AnyWordSpec with DatasetSuiteBase with SamplesDatasets {
 
     "return averageRatingsByActor correctly" in {
       val actual: Dataset[Row] =
-        Stats
-          .averageRatingsByActor(
+        Stats.averageRatingsByActor(
             nameBasics = imdbDataSetSamples.nameBasicsDataset,
             titlePrincipals = imdbDataSetSamples.titlePrincipalsDataset,
             titleRatings = imdbDataSetSamples.titleRatingsDataset,
@@ -139,8 +135,7 @@ class StatsTest extends AnyWordSpec with DatasetSuiteBase with SamplesDatasets {
 
     "return getLivingPersons correctly" in {
       val actual: DataFrame =
-        Stats
-          .getLivingPersons(imdbDataSetSamples.nameBasicsDataset)(spark)
+        Stats.getLivingPersons(imdbDataSetSamples.nameBasicsDataset)(spark)
           .cache()
 
       actual.show()

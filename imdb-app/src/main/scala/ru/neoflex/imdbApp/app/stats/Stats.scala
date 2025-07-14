@@ -1,4 +1,4 @@
-package ru.neoflex.imdbApp.app
+package ru.neoflex.imdbApp.app.stats
 
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
@@ -7,6 +7,7 @@ import java.time.LocalDate
 
 object Stats {
   import ru.neoflex.imdbApp.models._
+  import ru.neoflex.imdbApp.app.udf
 
   val RATING_BUCKED_COUNT: Int = 5
 
@@ -131,6 +132,8 @@ object Stats {
 
   }
 
+  /** udf для опеределения возраста person
+    */
   val howLongIsLiving: (Option[Short], Option[Short]) => Option[Short] =
     (birthYear: Option[Short], deathYear: Option[Short]) =>
       for {
@@ -144,6 +147,12 @@ object Stats {
 
       } yield (nowYear - bYear).toShort
 
+  /** живущие в настоящий момент persons из IMDB
+    *
+    * @param nameBasicsDataset
+    * @param spark
+    * @return
+    */
   def getLivingPersons(
     nameBasicsDataset: Dataset[NameBasicItem]
   )(implicit spark:    SparkSession) = {
@@ -158,6 +167,13 @@ object Stats {
 
   }
 
+  /** Аккумуляция названий серий для сериалов
+    *
+    * @param titleBasic
+    * @param titleEpisode
+    * @param spark
+    * @return tuple of (tv series key, series name, array of episode names, )
+    */
   def getSeriesNames(
     titleBasic:     Dataset[TitleBasicsItem],
     titleEpisode:   Dataset[TitleEpisodeItem]
@@ -170,7 +186,9 @@ object Stats {
     implicit val enc: Encoder[(String, Array[String], String)] =
       Encoders.tuple(
         Encoders.STRING,
-        Encoders.kryo[Array[String]], //использование kryo для массива с именами эпизодов
+        Encoders.kryo[Array[
+          String
+        ]], //использование kryo для массива с именами эпизодов
         Encoders.STRING
       )
 

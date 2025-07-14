@@ -35,10 +35,11 @@ choose_mod() {
   echo "Please enter a run mode [1, 2, or 3]:"
   echo "1) run Main"
   echo "2) run Samples"
-  echo "3) run KryEx2"
+  echo "3) run UDAF example"
+  echo "4) run UDAF typed example"
 
   read choice
-  
+
   case $choice in
   1)
     app_mod="Main"
@@ -47,7 +48,10 @@ choose_mod() {
     app_mod="Samples"
     ;;
   3)
-    app_mod="KryoEx2"
+    app_mod="UDAF"
+    ;;
+  4)
+    app_mod="UDAFTyped"
     ;;
   *)
     echo "Invalid option selected"
@@ -56,10 +60,28 @@ choose_mod() {
   esac
 }
 
+function set_driver_params() {
+
+  if [ -z "${SPARK_DRIVER_PORT}" ]; then
+    # fake arg to make Spark happy
+    spark_driver_port="a=1"
+  else
+    spark_driver_port="spark.driver.port=${SPARK_DRIVER_PORT}"
+  fi
+  if [ -z "${SPARK_DRIVER_HOST}" ]; then
+    spark_driver_host="b=1"
+  else
+    spark_driver_host="spark.driver.host=${SPARK_DRIVER_HOST}"
+  fi
+
+}
+
 load_env
 check_and_prompt_variable "SPARK_HOME"
 check_and_prompt_variable "SPARK_MASTER"
 check_and_prompt_variable "JAR_VERSION"
+
+set_driver_params
 
 echo "Using:"
 echo "SPARK_HOME:     $SPARK_HOME"
@@ -67,22 +89,7 @@ echo "SPARK_MASTER    $SPARK_MASTER"
 echo "JAR_VERSION:    $JAR_VERSION"
 echo "app_target:     ${app_target}"
 echo "assembly_name:  ${assembly_name}"
-
-function set_driver_params() {
- 
-  if [ -z "${SPARK_DRIVER_PORT}" ]; then
-      # fake arg to make Spark happy	
-      spark_driver_port="a=1"
-    else
-      spark_driver_port="spark.driver.port=${SPARK_DRIVER_PORT}"
-  fi
-  if [ -z "${SPARK_DRIVER_HOST}" ]; then
-      spark_driver_host="b=1"
-    else
-      spark_driver_host="spark.driver.host=${SPARK_DRIVER_HOST}"
-  fi
-
-}
+echo "driver params:" ${spark_driver_port} "," ${spark_driver_host}
 
 function run_item() {
   echo "Trying to submit the ${assembly_name}..."
@@ -98,8 +105,5 @@ function run_item() {
 
 choose_mod
 echo "Using mod:" $app_mod
-
-set_driver_params
-echo "driver params:" ${spark_driver_port} "," ${spark_driver_host}
 
 run_item "--mod" ${app_mod}

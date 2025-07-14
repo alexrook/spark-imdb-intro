@@ -1,4 +1,4 @@
-package ru.neoflex.imdbApp.app
+package ru.neoflex.imdbApp.app.stats
 
 import com.holdenkarau.spark.testing.DatasetSuiteBase
 import org.scalatest.matchers.should.Matchers._

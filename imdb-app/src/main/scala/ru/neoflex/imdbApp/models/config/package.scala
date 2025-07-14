@@ -4,7 +4,7 @@ package object config {
 
   object AppModulesEnum extends Enumeration {
     type AppModulesType = Value
-    val Main, Samples, KryoEx2 = Value
+    val Main, Samples, UDAF, UDAFTyped = Value
   }
 
   case class AppConfig(

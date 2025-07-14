@@ -22,7 +22,9 @@ class MyObject() {
   override def toString(): String = s"MyObject[${_message}, ${_number}]"
 }
 
-object KryoEx1 extends App {
+/** пример работы с kryo (не Spark)
+  */
+object KryoExample1 extends App {
 
 // Определение класса
 

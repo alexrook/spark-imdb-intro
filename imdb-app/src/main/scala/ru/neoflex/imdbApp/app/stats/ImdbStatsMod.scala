@@ -1,30 +1,24 @@
-package ru.neoflex.imdbApp.app
+package ru.neoflex.imdbApp.app.stats
 
 import org.apache.spark.sql.SparkSession
+import org.apache.log4j.LogManager
 
 object ImdbStatsMod {
 
   import ru.neoflex.imdbApp.dataset._
   import ru.neoflex.imdbApp.models.config.AppConfig
 
-  def run(appConfig: AppConfig): Unit = {
+  val log = LogManager.getLogger(ImdbStatsMod.getClass())
 
-    implicit val spark: SparkSession =
-      SparkSession.builder
-        .appName(appConfig.name)
-        .config(
-          "spark.serializer",
-          "org.apache.spark.serializer.KryoSerializer"
-        )
-        .config("spark.kryo.registrator", "ru.neoflex.imdbApp.kryo.KryoReg")
-        .getOrCreate()
+  def run(appConfig: AppConfig)(implicit spark: SparkSession): Unit = {
+
+    log.debug("Running ImdbStatsMod")
 
     val imdbDataSets: ImdbDataSets =
       ImdbDataSets(
         datasetDir = appConfig.files.datasetDir,
-        datasetFileEx = "tsv",
-        spark = spark
-      )
+        datasetFileEx = "tsv"
+      )(spark = spark)
 
     import imdbDataSets._
 
@@ -68,7 +62,6 @@ object ImdbStatsMod {
       )
       .show(100)
 
-    spark.stop()
   }
 
 }

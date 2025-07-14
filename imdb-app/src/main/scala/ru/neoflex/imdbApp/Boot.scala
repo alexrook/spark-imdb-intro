@@ -2,19 +2,22 @@ package ru.neoflex.imdbApp
 
 import com.typesafe.config._
 import org.apache.logging.log4j.LogManager
+import org.apache.spark.SparkConf
 import pureconfig._
 import pureconfig.error.ConfigReaderFailures
 import pureconfig.error.ThrowableFailure
 import pureconfig.generic.auto._
 
 import scala.util.Properties
-import ru.neoflex.imdbApp.kryo.KryoEx2
+import ru.neoflex.imdbApp.session.SparkSessionCreator
 
-object Boot {
+object Boot extends SparkSessionCreator {
   import ru.neoflex.imdbApp.models.config._
   import ru.neoflex.imdbApp.buildinfo.BuildInfo
-  import ru.neoflex.imdbApp.app._
   import ru.neoflex.imdbApp.cli._
+  import ru.neoflex.imdbApp.app.stats.ImdbStatsMod
+  import ru.neoflex.imdbApp.app.samples.ImdbSamplesMod
+  import ru.neoflex.imdbApp.app.udf._
 
   val log = LogManager.getLogger(Boot.getClass())
 
@@ -53,17 +56,62 @@ object Boot {
       mergedWithCommandLineAppCfg.runModule match {
 
         case AppModulesEnum.Main =>
-          ImdbStatsMod.run(mergedWithCommandLineAppCfg)
+          val sparkConf: SparkConf =
+            withKryoSparkConf(
+              withAppNameSparkConf(
+                new SparkConf,
+                mergedWithCommandLineAppCfg.name
+              )
+            )
+
+          ImdbStatsMod.run(mergedWithCommandLineAppCfg)(
+            getSparkSession(sparkConf)
+          )
 
         case AppModulesEnum.Samples =>
-          ImdbSamplesMod.run(mergedWithCommandLineAppCfg)
+          val sparkConf: SparkConf =
+            withPerExecutorMemory(
+              withKryoSparkConf(
+                withAppNameSparkConf(
+                  new SparkConf(),
+                  "Imdb dataset samples generation"
+                )
+              ),
+              "2G"
+            )
 
-        case AppModulesEnum.KryoEx2 =>
-          KryoEx2.run(mergedWithCommandLineAppCfg)
+          ImdbSamplesMod.run(mergedWithCommandLineAppCfg)(
+            getSparkSession(sparkConf)
+          )
+
+        case AppModulesEnum.UDAF =>
+          val sparkConf: SparkConf =
+            withKryoSparkConf(
+              withAppNameSparkConf(
+                new SparkConf,
+                "UDAF Kryo Serialization Example"
+              )
+            )
+
+          UdafExample.run(getSparkSession(sparkConf))
+
+        case AppModulesEnum.UDAFTyped =>
+          val sparkConf: SparkConf =
+            withKryoSparkConf(
+              withAppNameSparkConf(
+                new SparkConf,
+                "UDAF Kryo Serialization Example"
+              )
+            )
+
+          UdafTypedExample.run(getSparkSession(sparkConf))
 
       }
 
-      log.debug("imdb statistics application completed")
+      log.debug(
+        "{} application completed",
+        mergedWithCommandLineAppCfg.runModule
+      )
 
     }).left
       .foreach { ex =>
@@ -103,4 +151,5 @@ object Boot {
       config.root().render(renderOptions)
     )
   }
+
 }

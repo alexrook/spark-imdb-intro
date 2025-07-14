@@ -8,14 +8,12 @@ trait SamplesDatasets {
 
   lazy val imdbDataSetSamples: ImdbDataSets = ImdbDataSets(
     datasetDir = "imdb-app/src/test/resources/ds",
-    datasetFileEx = "sample.tsv",
-    spark = spark
-  )
+    datasetFileEx = "sample.tsv"
+  )(spark = spark)
 
   lazy val imdbDataSetSeriesSamples: ImdbDataSets = ImdbDataSets(
     datasetDir = "imdb-app/src/test/resources/ds/series",
-    datasetFileEx = "sample.tsv",
-    spark = spark
-  )
+    datasetFileEx = "sample.tsv"
+  )(spark = spark)
 
 }
