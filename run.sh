@@ -68,11 +68,29 @@ echo "JAR_VERSION:    $JAR_VERSION"
 echo "app_target:     ${app_target}"
 echo "assembly_name:  ${assembly_name}"
 
+function set_driver_params() {
+ 
+  if [ -z "${SPARK_DRIVER_PORT}" ]; then
+      # fake arg to make Spark happy	
+      spark_driver_port="a=1"
+    else
+      spark_driver_port="spark.driver.port=${SPARK_DRIVER_PORT}"
+  fi
+  if [ -z "${SPARK_DRIVER_HOST}" ]; then
+      spark_driver_host="b=1"
+    else
+      spark_driver_host="spark.driver.host=${SPARK_DRIVER_HOST}"
+  fi
+
+}
+
 function run_item() {
   echo "Trying to submit the ${assembly_name}..."
   echo "==========================================================="
   $SPARK_HOME/bin/spark-submit \
     --master $SPARK_MASTER \
+    --conf ${spark_driver_port} \
+    --conf ${spark_driver_host} \
     --conf "spark.driver.extraJavaOptions=-Dlog4j2.configurationFile=file:log4j2.xml" \
     --conf "spark.executor.extraJavaOptions=-Dlog4j2.configurationFile=file:log4j2.xml" \
     ${app_target}/${assembly_name}-${JAR_VERSION}.jar $@
@@ -80,5 +98,8 @@ function run_item() {
 
 choose_mod
 echo "Using mod:" $app_mod
+
+set_driver_params
+echo "driver params:" ${spark_driver_port} "," ${spark_driver_host}
 
 run_item "--mod" ${app_mod}
