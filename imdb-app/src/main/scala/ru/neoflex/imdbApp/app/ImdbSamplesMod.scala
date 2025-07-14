@@ -6,6 +6,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
 import ru.neoflex.imdbApp.models.config.AppConfig
+import org.apache.spark.sql.Encoder
 
 /** создание тестовых данных
   */
@@ -18,6 +19,7 @@ object ImdbSamplesMod {
 
   def run(appConfig: AppConfig): Unit = {
 
+    val samplesDir = s"${appConfig.files.datasetDir}/samples"
     val sparkConf =
       new SparkConf().setAppName("ImdbDatasetSamples")
 
@@ -25,7 +27,7 @@ object ImdbSamplesMod {
       SparkSession.builder.config(sparkConf).getOrCreate()
 
     val imdbDataSets: ImdbDataSets =
-      ImdbDataSets(appConfig.files.datasetDir, spark = spark)
+      ImdbDataSets(appConfig.files.datasetDir,datasetFileEx = ".tsv", spark = spark)
 
     import spark.implicits._
 
@@ -40,10 +42,12 @@ object ImdbSamplesMod {
         .filter(col("rowNum") < 21)
         .as[TitleRatingItem]
 
-    //titleRatingsSample.show()
+    titleRatingsSample.show(20)
+
+    write(titleRatingsSample, samplesDir, "title.rating.sample")(identity)
 
     //я хочу фильмы только с рейтингом
-    val titlesWithRating: Dataset[TitleBasicsItem] =
+    val titlesBasicWithRating: Dataset[TitleBasicsItem] =
       imdbDataSets.titleBasicsDataset
         .filter(!_.titleType.contains("tvEpisode")) //и не сериалы
         .join(titleRatingsSample, "tconst")
@@ -51,50 +55,57 @@ object ImdbSamplesMod {
         .as[TitleBasicsItem]
         .cache()
 
-    titlesWithRating.show(20)
-    println(titlesWithRating.count())
+    titlesBasicWithRating.show(20)
 
-    // val titleBasicSample: Dataset[TitleBasicsRow] =
-    //   titlesWithRating
-    //     .as[TitleBasicsItem]
-    //     .map { item: TitleBasicsItem =>
-    //       TitleBasicsRow(
-    //         tconst = item.tconst,
-    //         titleType = item.titleType,
-    //         primaryTitle = item.primaryTitle,
-    //         originalTitle = item.originalTitle,
-    //         isAdult = item.isAdult.map {
-    //           case true => 1
-    //           case _    => 0
-    //         },
-    //         startYear = item.startYear,
-    //         endYear = item.endYear,
-    //         runtimeMinutes = item.runtimeMinutes,
-    //         genres = item.genres.mkString(",")
-    //       )
-    //     }
+    write(titlesBasicWithRating, samplesDir, "title.basic.sample") {
+      item: TitleBasicsItem =>
+        TitleBasicsRow(
+          tconst = item.tconst,
+          titleType = item.titleType,
+          primaryTitle = item.primaryTitle,
+          originalTitle = item.originalTitle,
+          isAdult = item.isAdult.map {
+            case true => 1
+            case _    => 0
+          },
+          startYear = item.startYear,
+          endYear = item.endYear,
+          runtimeMinutes = item.runtimeMinutes,
+          genres = item.genres.mkString(",")
+        )
+    }
 
-    // titleBasicSample.show()
+    println("==========Samples generation done==============")
 
-    // titleBasicSample.write
-    //   .mode("append")
-    //   .format("csv")
-    //   .option("header", "true")
-    //   .option("delimiter", "\t")
-    //   .csv(s"${appConfig.files.datasetDir}/samples/titleBasicSample")
+  }
 
-    // val titleRatingsSample: Dataset[TitleRatingItem] =
-    //   titleBasicSample
-    //     .join(
-    //       imdbDataSets.titleRatingsDataset,
-    //       "tconst"
-    //     )
-    //     .as[TitleRatingItem]
+  /** создание файлов для хранения тестовых наборов
+    *
+    * @param datasetA
+    * @param samplesDir
+    * @param fileName
+    * @param f
+    */
+  def write[A, B: Encoder](
+    datasetA:   Dataset[A],
+    samplesDir: String,
+    fileName:   String
+  )(
+    f: A => B
+  ): Unit = {
 
-    // titleRatingsSample.show(100)
+    def write(delimiter: String, fileExt: String): Unit =
+      datasetA
+        .map(f)
+        .write
+        .mode("overwrite")
+        .format("csv")
+        .option("header", "true")
+        .option("delimiter", delimiter)
+        .csv(s"${samplesDir}/${fileName}.$fileExt")
 
-    println("==========Done==============")
-
+    write("\t", "tsv") //запись как исходных файлах
+    write(",", "csv") //запись для вставки в код теста
   }
 
 }
