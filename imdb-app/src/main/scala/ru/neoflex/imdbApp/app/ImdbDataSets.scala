@@ -1,18 +1,17 @@
 package ru.neoflex.imdbApp.app
 
-import ru.neoflex.imdbApp.models.config.AppConfig
-import org.apache.spark.sql.Dataset
-import org.apache.spark.sql.execution.columnar.compression.Encoder
-import org.apache.spark.sql.SparkSession
+ import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.Encoder
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.execution.columnar.compression.Encoder
 
-final case class ImdbDataSets(appConfig: AppConfig, spark: SparkSession) {
+final case class ImdbDataSets(datasetDir: String, spark: SparkSession) {
   import ru.neoflex.imdbApp.models._
 
   import spark.implicits._
 
   def getDatasetAbsolutePath(datasetFileName: String) =
-    s"${appConfig.files.datasetDir}/$datasetFileName"
+    s"${datasetDir}/$datasetFileName"
 
   val nameBasicRowTSV: String = getDatasetAbsolutePath("name.basics.tsv")
   val titleAkasTSV:    String = getDatasetAbsolutePath("title.akas.tsv")
@@ -33,7 +32,7 @@ final case class ImdbDataSets(appConfig: AppConfig, spark: SparkSession) {
             birthYear,
             deathYear,
             primaryProfession,
-            titles
+            knownForTitles
           ) =>
         NameBasicItem(
           nconst = nconst,
@@ -41,7 +40,7 @@ final case class ImdbDataSets(appConfig: AppConfig, spark: SparkSession) {
           birthYear = birthYear,
           deathYear = deathYear,
           primaryProfession = primaryProfession.asList,
-          titles = titles.asList
+          titles = knownForTitles.asList
         )
     }.cache()
 
