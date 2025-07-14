@@ -6,7 +6,7 @@ object SimpleApp {
   import org.apache.spark.sql.Dataset
   import org.apache.spark.sql.Encoder
   import org.apache.spark.sql.functions._
-
+  import org.apache.spark.sql.Row
   import ru.neoflex.imdbApp.models._
 
   def main(args: Array[String]): Unit = {
@@ -64,8 +64,7 @@ object SimpleApp {
               isAdult,
               startYear,
               endYear,
-              runtimeMinutes,
-              genres
+              runtimeMinutes
             ) =>
           TitleBasicsItem(
             tconst = tconst,
@@ -75,8 +74,7 @@ object SimpleApp {
             isAdult = isAdult.map(_ > 0),
             startYear = startYear,
             endYear = endYear,
-            runtimeMinutes = runtimeMinutes,
-            genres = genres.asList
+            runtimeMinutes = runtimeMinutes
           )
       }.cache()
 
