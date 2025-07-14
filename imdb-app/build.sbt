@@ -9,9 +9,8 @@ libraryDependencies ++= pureConfigLibs
 libraryDependencies ++= scalaTestLibs
 
 // Добавляем к проекту настройки BuildInfo
-//enablePlugins(BuildInfoPlugin)
+enablePlugins(BuildInfoPlugin)
 
-/*
 buildInfoKeys := Seq[BuildInfoKey](
   name,
   version,
@@ -26,10 +25,9 @@ buildInfoKeys := Seq[BuildInfoKey](
     "git rev-list --count HEAD".!!.trim
   }
 )
-*/
 
-//buildInfoOptions += BuildInfoOption.BuildTime
-//buildInfoPackage := "ru.neoflex.imdbApp.buildinfo"
+buildInfoOptions += BuildInfoOption.BuildTime
+buildInfoPackage := "ru.neoflex.imdbApp.buildinfo"
 
 //disable publishing the main jar produced by `package`
 Compile / packageBin / publishArtifact := false
