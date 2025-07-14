@@ -49,10 +49,12 @@ Global / cancelable := true
 enablePlugins(AssemblyPlugin)
 
 assembly / assemblyMergeStrategy := {
-  case "logback-test.xml"                                  => MergeStrategy.discard
-  case PathList(ps @ _*) if ps.last endsWith ".conf"       => MergeStrategy.concat
-  case PathList(ps @ _*) if ps.last endsWith ".properties" => MergeStrategy.concat
-  case x                                                   => MergeStrategy.defaultMergeStrategy(x)
+  case PathList("META-INF", "versions", "9", "module-info.class") =>
+    MergeStrategy.discard
+  case PathList(ps @ _*) if ps.last endsWith ".conf" => MergeStrategy.concat
+  case PathList(ps @ _*) if ps.last endsWith ".properties" =>
+    MergeStrategy.concat
+  case x => MergeStrategy.defaultMergeStrategy(x)
 }
 
-//assembly / mainClass := Some("ru.neofex.imdbApp.SimpleApp")
+assembly / mainClass := Some("ru.neoflex.imdbApp.Boot")
