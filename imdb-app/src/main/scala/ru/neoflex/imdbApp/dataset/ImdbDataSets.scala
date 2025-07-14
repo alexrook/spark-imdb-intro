@@ -54,7 +54,7 @@ final case class ImdbDataSets(
           birthYear = birthYear,
           deathYear = deathYear,
           primaryProfession = primaryProfession.asList,
-          titles = knownForTitles.asList
+          knownForTitles = knownForTitles.asList
         )
     }.cache()
 
