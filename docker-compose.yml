@@ -47,7 +47,8 @@ services:
     volumes:
       - ./imdb-app/target/scala-2.12/spark-imdb-app-assembly-0.0.1.jar:/opt/apps/imdb-app.jar
       - ./app-vol:/var/tmp/data
-    scale: 2
+    deploy:
+      replicas: 2
 
   # spark-submit-imdb:
   #   build: imdb-app/.
