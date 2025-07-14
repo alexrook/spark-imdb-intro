@@ -1,7 +1,6 @@
 package ru.neoflex.imdbApp.app
 
 import com.holdenkarau.spark.testing.DatasetSuiteBase
-import org.apache.spark.sql.DataFrame
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import ru.neoflex.imdbApp.dataset.SamplesDatasets
@@ -18,13 +17,17 @@ class StatsTVSeriesTest
     "run" should {
 
       "return getSeriesNames correctly" in {
-        val actual: DataFrame =
+        val actual =
           Stats.getSeriesNames(
             titleBasic = imdbDataSetSeriesSamples.titleBasicsDataset,
             titleEpisode = imdbDataSetSeriesSamples.titleEpisodeDataset
           )(spark)
 
-        actual.show(1000)
+        actual.show(40)
+
+        actual.collect().foreach { case (_, seriesNames, _) =>
+          assert(seriesNames.nonEmpty)
+        }
 
       }
 

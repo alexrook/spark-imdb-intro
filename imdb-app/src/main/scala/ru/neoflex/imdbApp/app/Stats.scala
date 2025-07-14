@@ -161,11 +161,18 @@ object Stats {
   def getSeriesNames(
     titleBasic:     Dataset[TitleBasicsItem],
     titleEpisode:   Dataset[TitleEpisodeItem]
-  )(implicit spark: SparkSession) = {
+  )(implicit spark: SparkSession): Dataset[(String, Array[String], String)] = {
     spark.udf.register("SeriesAgg", functions.udaf(udf.SeriesAgg))
 
     val titlesWithNames: DataFrame =
-      titleBasic.select("tconst", "primaryTitle")
+      titleBasic.select("tconst", "primaryTitle").cache()
+
+    implicit val enc: Encoder[(String, Array[String], String)] =
+      Encoders.tuple(
+        Encoders.STRING,
+        Encoders.kryo[Array[String]], //использование kryo для массива с именами эпизодов
+        Encoders.STRING
+      )
 
     titleEpisode
       .select(
@@ -173,11 +180,11 @@ object Stats {
         col("parentTconst").alias("EpisodeParentTconst")
       )
       .join(
-        titlesWithNames.alias("tNamesA"),
+        titlesWithNames.alias("tNamesA"), //имена серий
         col("EpisodeTconst") === col("tNamesA.tconst")
       )
       .join(
-        titlesWithNames.alias("tNamesB"),
+        titlesWithNames.alias("tNamesB"), //имена сериалов
         col("EpisodeParentTconst") === col("tNamesB.tconst")
       )
       .groupBy(
@@ -190,6 +197,7 @@ object Stats {
         col("EpisodeNames"),
         col("SeriesName")
       )
+      .as[(String, Array[String], String)]
 
   }
 
