@@ -1,81 +1,128 @@
-# spark-intro
+# Project spark-intro
 
+## Description
+Это тестовый проект `agrachev@neoflex.ru`, созданный в рамках прохождения испытательного срока.
+Проект включает в себя приложение для Apache Spark для расчета статистики по публичным наборам данных от IMDB.com.
+
+Набор данных имеет следующую структуру:
+
+![dataset plantuml](app-vol/datasets/imdb/imdbsets.png "IMDB Datasets")
+
+## Project Goals
+
+- [ ] Понятная структура проекта
+- [ ] Описание через README.md
+- [ ] Тесты
+- [ ] Предусмотреть конфигурирование джобы через файл конфига application.conf 
+  - [X] библиотека pureConfig и переменные окружения
+  - [X] имя джобы,
+  - [ ] имя файла источника данных
+  - [ ] имя файла с результатами обработки
+  - [X] изменение уровня логирования
+- [X] Добавить дополнительное логирование, вывести в лог конфиг, с которым запускалась джоба
+- [ ] Чистый код, комментарии, логи, там где нужно
+- [ ] Организован сбор метрик и отображение в Grafana
+- [ ] docker-compose с необходимым окружением
+    - [X] spark-master
+    - [X] spark-worker
+    - [ ] prometheus 
+    - [ ] grafana
+    - [ ] db?
+    - [ ] hdfs?
+- [X] Обязательно использование функций join, groupBy, agg
+- [X] Получить fat-jar файл джобы, для запуска на кластере с помощью spark-submit
+    - [X] использовать плагин sbt-assembly
 
 ## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Для вашего удобства, перед началом работы проверьте, что в вашей системе установлены следующие инструменты
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+* [Docker](https://www.docker.com/)
+* [sdkman](https://sdkman.io/)
 
-## Add your files
-Вы можете добавить свой собственный `.env` файл, 
+### Get IMDB dataset
+Перед началом работы необходимо скачать [^1] IMDB public datasets:
+```shell
+>cd app-vol/datasets/imdb 
+>wget -ci datasets.urls
+>gunzip *.tsv.gz
+```
+
+Измените права на запись для каталогов, это нужно чтобы приложение находять в контейнере докера могло туда сохранять данные.
+
+```shell
+>cd <project-root>
+>chmod -R a+w app-vol/
+```
+
+
+[^1]: Проект разрабатывался на операционной системе Linux, и здесь и далее используются команды для нее.
+
+### Geting Apache Spark
+
+Если у вас не установлен Apache Spark, необходимо его [скачать](https://spark.apache.org/downloads.html) и разархивировать, к примеру в каталог `/opt/spark/`
+
+### Add your files
+Для настройки запуска приложения вы можете добавить свой собственный `.env` файл, 
 к примеру
 
 ```shell
-SPARK_HOME=/opt/spark/3.5.1-hadoop3
+SPARK_HOME=/opt/spark/351
 JAR_VERSION=0.0.1
+#use this if you have a remote Spark cluster
+#SPARK_DRIVER_PORT=7777
+#SPARK_DRIVER_HOST=192.168.5.3
+# local
+#SPARK_MASTER=local[*]
+#docker
 SPARK_MASTER=spark://0.0.0.0:7077
 ```
 
-## Integrate with your tools
+### Run tools
 
-- [ ] [Set up project integrations](https://neogit.neoflex.ru/agrachev/spark-intro/-/settings/integrations)
+Находясь в корне проекта, настройте перeменные среды и запустите докер
 
-## Test and Deploy
+```shell
+>sdk env install && sdk env 
+>docker compose up -d
+```
 
-Use the built-in continuous integration in GitLab.
+Соберите проект
+```shell
+>sbt clean assembly
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### Test and Deploy
 
-***
+Запуск проекта происходит при помощи утилиты `spark-submit`, которая обернута скриптом `run.sh`
 
-# Editing this README
+Находясь в корне проекта, запустите
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+```shell
+>./run.sh
+```
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Проект имеет три режима запуска 
+- Main собирает и показывает статистику по наборам данных  IMDB
+- Samples - собирает samples для создания тестовых наборов данных
+- KryoEx2 - эксперименты с Kryo сериализацией
 
-## Name
-Choose a self-explaining name for your project.
+### Logging
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Приложение в своей работе использует настроки логирования через файл `log4j2.xml` в корне проекта.  Запуск тестов использует `log4j2-test.xml` в тестовых ресурсах проекта.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Results
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Результаты работы проекта для режимов `Main`, `KryoEx2` будут отображены в консоли.
+Для режима `Samples` результаты будут сохранены в каталог `app-vol/datasets/imdb/samples`
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Conclusion
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Проект нуждается в вашем feedback. Пожалуйста пишите его на почту `agrachev@neoflex.ru` или в комментариях [gitlab](https://neogit.neoflex.ru/agrachev/spark-intro). Вы также можете отметить Project Goals в этом документе, которые, по вашему мнению, выполнены.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
 
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
