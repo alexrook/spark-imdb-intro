@@ -1,14 +1,18 @@
 package ru.neoflex.imdbApp
 
+import javax.swing.text.StyledEditorKit.BoldAction
+
 package object models {
 
   implicit class StrArrayOps(v: String) {
 
     def clean: Option[String] =
-      Option(v.replaceAll("\\\\N", "")).filter(_.nonEmpty)
+      Option(v).map(_.replaceAll("\\\\N", "")).filter(_.nonEmpty)
 
     def asList: List[String] =
-      v.replaceAll("[\\[\\]\\\\N]", "").split(",").toList,
+      Option(v)
+        .map(_.replaceAll("[\\[\\]\\\\N]", "").split(",").toList)
+        .getOrElse(List.empty[String])
 
   }
 
@@ -31,7 +35,7 @@ package object models {
     language:        String,
     types:           String,
     attributes:      String,
-    isOriginalTitle: Short
+    isOriginalTitle: Option[Short]
   )
 
   case class TitleAkasItem(
@@ -42,7 +46,41 @@ package object models {
     language:        Option[String],
     types:           List[String],
     attributes:      List[String],
-    isOriginalTitle: Boolean
+    isOriginalTitle: Option[Boolean]
+  )
+
+  // title.basics.tsv.gz
+
+  //   tconst (string) - alphanumeric unique identifier of the title
+  //   titleType (string) – the type/format of the title (e.g. movie, short, tvseries, tvepisode, video, etc)
+  //   primaryTitle (string) – the more popular title / the title used by the filmmakers on promotional materials at the point of release
+  //   originalTitle (string) - original title, in the original language
+  //   isAdult (boolean) - 0: non-adult title; 1: adult title
+  //   startYear (YYYY) – represents the release year of a title. In the case of TV Series, it is the series start year
+  //   endYear (YYYY) – TV Series end year. ‘\N’ for all other title types
+  //   runtimeMinutes – primary runtime of the title, in minutes
+  //   genres (string array) – includes up to three genres associated with the title
+
+  case class TitleBasicsRow(
+    tconst:         String,
+    titleType:      String,
+    primaryTitle:   String,
+    originalTitle:  String,
+    isAdult:        Option[Short],
+    startYear:      Option[Short],
+    endYear:        Option[Short],
+    runtimeMinutes: Option[Short]
+  )
+
+  case class TitleBasicsItem(
+    tconst:         String,
+    titleType:      String,
+    primaryTitle:   String,
+    originalTitle:  String,
+    isAdult:        Option[Boolean],
+    startYear:      Option[Short],
+    endYear:        Option[Short],
+    runtimeMinutes: Option[Short]
   )
 
 //   name.basics.tsv.gz
@@ -56,8 +94,8 @@ package object models {
   case class NameBasicRow(
     nconst:            String,
     primaryName:       String,
-    birthYear:         Option[Int],
-    deathYear:         Option[Int],
+    birthYear:         Option[Short],
+    deathYear:         Option[Short],
     primaryProfession: String,
     titles:            String
   )
@@ -65,8 +103,8 @@ package object models {
   case class NameBasicItem(
     nconst:            String,
     primaryName:       String,
-    birthYear:         Option[Int],
-    deathYear:         Option[Int],
+    birthYear:         Option[Short],
+    deathYear:         Option[Short],
     primaryProfession: List[String],
     titles:            List[String]
   )

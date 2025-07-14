@@ -16,6 +16,7 @@ object SimpleApp {
 
     val nameBasicRowTSV: String = s"$datasetsDir/name.basics.tsv"
     val titleAkasTSV:    String = s"$datasetsDir/title.akas.tsv"
+    val titleBasicsTSV = s"$datasetsDir/title.basics.tsv"
 
     implicit val spark: SparkSession =
       SparkSession.builder.appName("Simple Application").getOrCreate()
@@ -33,7 +34,7 @@ object SimpleApp {
             primaryProfession = primaryProfession.asList,
             titles = titles.asList
           )
-      }
+      }.cache()
 
     val titleAkasDataset: Dataset[TitleAkasItem] =
       readIMDBDataset[TitleAkasRow, TitleAkasItem](titleAkasTSV) {
@@ -46,13 +47,38 @@ object SimpleApp {
             language = language.clean,
             types = types.asList,
             attributes = attributes.asList,
-            isOriginalTitle = isOriginalTitle > 0
+            isOriginalTitle = isOriginalTitle.map(_ > 0)
           )
-      }
+      }.cache()
 
-    nameBasicsDataset.show()
+    val titleBasicsDataset: Dataset[TitleBasicsItem] =
+      readIMDBDataset[TitleBasicsRow, TitleBasicsItem](titleBasicsTSV) {
+        case TitleBasicsRow(
+              tconst,
+              titleType,
+              primaryTitle,
+              originalTitle,
+              isAdult,
+              startYear,
+              endYear,
+              runtimeMinutes
+            ) =>
+          TitleBasicsItem(
+            tconst = tconst,
+            titleType = titleType,
+            primaryTitle = primaryTitle,
+            originalTitle = originalTitle,
+            isAdult = isAdult.map(_ > 0),
+            startYear = startYear,
+            endYear = endYear,
+            runtimeMinutes = runtimeMinutes
+          )
+      }.cache()
 
-    titleAkasDataset.show()
+    // nameBasicsDataset.show()
+    // titleAkasDataset.show()
+
+    titleBasicsDataset.show()
 
     spark.stop()
   }
