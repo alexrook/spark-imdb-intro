@@ -35,14 +35,14 @@ object ImdbStatsMod {
         titleBasic = titleBasicsDataset,
         titleRatings = titleRatingsDataset
       )
-    //   .show(500)
+      .show(500)
 
     Stats
       .averageRatingsByGenre(
         titleBasic = titleBasicsDataset,
         titleRatings = titleRatingsDataset
       )
-    //.show(500)
+      .show(500)
 
     Stats
       .averageRatingsByActor(
@@ -51,15 +51,15 @@ object ImdbStatsMod {
         titleRatings = titleRatingsDataset,
         titleBasic = titleBasicsDataset
       )
-    //.show(100)
+      .show(100)
 
     Stats
       .ratingCount(titleRatings = titleRatingsDataset)
-    //  .show(500)
+      .show(500)
 
     Stats
       .getLivingPersons(nameBasicsDataset)
-    //  .show()
+      .show()
 
     Stats
       .getSeriesNames(
