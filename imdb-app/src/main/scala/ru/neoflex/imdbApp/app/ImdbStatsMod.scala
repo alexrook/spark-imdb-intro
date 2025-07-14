@@ -3,7 +3,7 @@ package ru.neoflex.imdbApp.app
 import org.apache.spark.sql.SparkSession
 
 object ImdbStatsMod {
-  
+
   import ru.neoflex.imdbApp.dataset._
   import ru.neoflex.imdbApp.models.config.AppConfig
 
@@ -13,7 +13,11 @@ object ImdbStatsMod {
       SparkSession.builder.appName(appConfig.name).getOrCreate()
 
     val imdbDataSets: ImdbDataSets =
-      ImdbDataSets(appConfig.files.datasetDir, spark = spark)
+      ImdbDataSets(
+        datasetDir = appConfig.files.datasetDir,
+        datasetFileEx = ".tsv",
+        spark = spark
+      )
 
     import imdbDataSets._
 

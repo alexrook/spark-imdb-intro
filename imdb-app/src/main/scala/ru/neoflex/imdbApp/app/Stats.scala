@@ -7,6 +7,8 @@ import org.apache.spark.sql.expressions.Window
 object Stats {
   import ru.neoflex.imdbApp.models._
 
+  val RATING_BUCKED_COUNT: Int = 5
+
   /** топ N по жанрам
     *
     * @param genre
@@ -103,7 +105,7 @@ object Stats {
       .select(col("nconst"), col("primaryName"), col("AvgRating"))
 
   /*
-   * число фильмов по для группы близких рейтингов
+   * число фильмов для группы близких рейтингов
    */
 
   def ratingCount(
@@ -117,11 +119,14 @@ object Stats {
     titleRatings
       .withColumn(
         "bucket",
-        ntile(5).over(window)
+        ntile(RATING_BUCKED_COUNT).over(window)
       )
       .repartition(col("bucket"))
       .groupBy("bucket")
-      .agg(count("tconst"), avg("averageRating").as("AvgRating"))
+      .agg(
+        count("tconst").as("TitlesCount"),
+        avg("averageRating").as("AvgRating")
+      )
 
   }
 }

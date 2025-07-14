@@ -5,34 +5,38 @@ import org.apache.spark.sql.Encoder
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.execution.columnar.compression.Encoder
 
-final case class ImdbDataSets(datasetDir: String, spark: SparkSession) {
+final case class ImdbDataSets(
+  datasetDir:    String,
+  datasetFileEx: String,
+  spark:         SparkSession
+) {
   import ru.neoflex.imdbApp.models._
 
   import spark.implicits._
 
   def getDatasetAbsolutePath(datasetFileName: String) =
-    s"${datasetDir}/$datasetFileName"
+    s"${datasetDir}/$datasetFileName.$datasetFileEx"
 
   protected[dataset] val nameBasicRowTSV: String =
-    getDatasetAbsolutePath("name.basics.tsv")
+    getDatasetAbsolutePath("name.basics")
 
   protected[dataset] val titleAkasTSV: String =
-    getDatasetAbsolutePath("title.akas.tsv")
+    getDatasetAbsolutePath("title.akas")
 
   protected[dataset] val titleBasicsTSV: String =
-    getDatasetAbsolutePath("title.basics.tsv")
+    getDatasetAbsolutePath("title.basics")
 
   protected[dataset] val titleCrewTSV: String =
-    getDatasetAbsolutePath("title.crew.tsv")
+    getDatasetAbsolutePath("title.crew")
 
   protected[dataset] val titleEpisodeTSV: String =
-    getDatasetAbsolutePath("title.episode.tsv")
+    getDatasetAbsolutePath("title.episode")
 
   protected[dataset] val titlePrincipalsTSV: String =
-    getDatasetAbsolutePath("title.principals.tsv")
+    getDatasetAbsolutePath("title.principals")
 
   protected[dataset] val titleRatingsTSV: String =
-    getDatasetAbsolutePath("title.ratings.tsv")
+    getDatasetAbsolutePath("title.ratings")
 
   lazy val nameBasicsDataset: Dataset[NameBasicItem] =
     readIMDBDataset[NameBasicRow, NameBasicItem](nameBasicRowTSV) {
