@@ -1,7 +1,5 @@
 package ru.neoflex.imdbApp
 
-import javax.swing.text.StyledEditorKit.BoldAction
-
 package object models {
 
   implicit class StrArrayOps(v: String) {
@@ -81,6 +79,65 @@ package object models {
     startYear:      Option[Short],
     endYear:        Option[Short],
     runtimeMinutes: Option[Short]
+  )
+
+  // title.crew.tsv.gz
+
+  //   tconst (string) - alphanumeric unique identifier of the title
+  //   directors (array of nconsts) - director(s) of the given title
+  //   writers (array of nconsts) – writer(s) of the given title
+
+  case class TitleCrewRow(
+    tconst:    String,
+    directors: String,
+    writers:   String
+  )
+
+  case class TitleCrewItem(
+    tconst:    String,
+    directors: List[String],
+    writers:   List[String]
+  )
+
+  // title.episode.tsv.gz
+
+  //   tconst (string) - alphanumeric identifier of episode
+  //   parentTconst (string) - alphanumeric identifier of the parent TV Series
+  //   seasonNumber (integer) – season number the episode belongs to
+  //   episodeNumber (integer) – episode number of the tconst in the TV series
+  case class TitleEpisodeItem(
+    tconst:        String,
+    parentTconst:  String,
+    seasonNumber:  Option[Short],
+    episodeNumber: Option[Short]
+  )
+
+// title.principals.tsv.gz
+
+//     tconst (string) - alphanumeric unique identifier of the title
+//     ordering (integer) – a number to uniquely identify rows for a given titleId
+//     nconst (string) - alphanumeric unique identifier of the name/person
+//     category (string) - the category of job that person was in
+//     job (string) - the specific job title if applicable, else '\N'
+//     characters (string) - the name of the character played if applicable, else '\N'
+  case class TitlePrincipalsItem(
+    tconst:     String,
+    ordering:   Int,
+    nconst:     String,
+    category:   String,
+    job:        Option[String],
+    characters: Option[String]
+  )
+
+// title.ratings.tsv.gz
+
+//     tconst (string) - alphanumeric unique identifier of the title
+//     averageRating – weighted average of all the individual user ratings
+//     numVotes - number of votes the title has received
+  case class TitleRatingItem(
+    tconst:        String,
+    averageRating: Float,
+    numVotes:      Int
   )
 
 //   name.basics.tsv.gz

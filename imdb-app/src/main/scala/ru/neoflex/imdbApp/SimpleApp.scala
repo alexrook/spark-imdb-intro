@@ -14,9 +14,13 @@ object SimpleApp {
 
     val datasetsDir = "file:///var/tmp/data/datasets/imdb"
 
-    val nameBasicRowTSV: String = s"$datasetsDir/name.basics.tsv"
-    val titleAkasTSV:    String = s"$datasetsDir/title.akas.tsv"
-    val titleBasicsTSV = s"$datasetsDir/title.basics.tsv"
+    val nameBasicRowTSV:    String = s"$datasetsDir/name.basics.tsv"
+    val titleAkasTSV:       String = s"$datasetsDir/title.akas.tsv"
+    val titleBasicsTSV:     String = s"$datasetsDir/title.basics.tsv"
+    val titleCrewTSV:       String = s"$datasetsDir/title.crew.tsv"
+    val titleEpisodeTSV:    String = s"$datasetsDir/title.episode.tsv"
+    val titlePrincipalsTSV: String = s"$datasetsDir/title.principals.tsv"
+    val titleRatingsTSV:    String = s"$datasetsDir/title.ratings.tsv"
 
     implicit val spark: SparkSession =
       SparkSession.builder.appName("Simple Application").getOrCreate()
@@ -75,10 +79,36 @@ object SimpleApp {
           )
       }.cache()
 
-    // nameBasicsDataset.show()
-    // titleAkasDataset.show()
+    val titleCrewDataset: Dataset[TitleCrewItem] =
+      readIMDBDataset[TitleCrewRow, TitleCrewItem](titleCrewTSV) { case TitleCrewRow(tconst, directors, writers) =>
+        TitleCrewItem(
+          tconst = tconst,
+          directors = directors.asList,
+          writers = writers.asList
+        )
+      }.cache()
 
+    val titleEpisodeDataset: Dataset[TitleEpisodeItem] =
+      readIMDBDataset(titleEpisodeTSV)(identity[TitleEpisodeItem]).cache()
+
+    val titlePrincipalsDataset: Dataset[TitlePrincipalsItem] =
+      readIMDBDataset(titlePrincipalsTSV) { i: TitlePrincipalsItem =>
+        i.copy(
+          job = i.job.flatMap(_.clean),
+          characters = i.characters.flatMap(_.clean)
+        )
+      }.cache()
+
+    val titleRatingsDataset: Dataset[TitleRatingItem] =
+      readIMDBDataset(titleRatingsTSV)(identity[TitleRatingItem]).cache()
+
+    nameBasicsDataset.show()
+    titleAkasDataset.show()
     titleBasicsDataset.show()
+    titleCrewDataset.show()
+    titleEpisodeDataset.show()
+    titlePrincipalsDataset.show()
+    titleRatingsDataset.show()
 
     spark.stop()
   }
