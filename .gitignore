@@ -27,4 +27,6 @@ target/
 app-vol/datasets/imdb/*.tsv
 app-vol/datasets/imdb/*.png
 
+# root .env file
+.env
 
