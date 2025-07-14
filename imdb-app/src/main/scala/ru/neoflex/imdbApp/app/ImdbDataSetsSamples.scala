@@ -5,10 +5,10 @@ import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
-import ru.neoflex.imdbApp.models.TitleBasicsItem
-import ru.neoflex.imdbApp.models.TitleBasicsRow
 
 object ImdbDataSetsSamples {
+
+  import ru.neoflex.imdbApp.models._
 
   val SEED = 123L
 
@@ -17,7 +17,7 @@ object ImdbDataSetsSamples {
   def main(args: Array[String]): Unit = {
 
     val sparkConf =
-      new SparkConf().setAppName("ImdbDatasetSamples").setMaster("local[*]")
+      new SparkConf().setAppName("ImdbDatasetSamples")//.setMaster("local[*]")
 
     implicit val spark: SparkSession =
       SparkSession.builder.config(sparkConf).getOrCreate()
@@ -27,7 +27,7 @@ object ImdbDataSetsSamples {
     val imdbDataSets =
       ImdbDataSets(datasetDir = "app-vol/datasets/imdb", spark)
 
-    val titleBasicDSSample: Dataset[TitleBasicsRow] =
+    val titleBasicSample: Dataset[TitleBasicsRow] =
       imdbDataSets.titleBasicsDataset
         .filter(!_.titleType.contains("tvEpisode"))
         .sample(
@@ -56,11 +56,21 @@ object ImdbDataSetsSamples {
           )
         }
 
-    titleBasicDSSample.write
+    titleBasicSample.write
       .format("csv")
       .option("header", "true")
       .option("delimiter", "\t")
       .csv("target/test-data")
+
+    val titleRatingsSample: Dataset[TitleRatingItem] =
+      titleBasicSample
+        .join(
+          imdbDataSets.titleRatingsDataset,
+          "tconst"
+        )
+        .as[TitleRatingItem]
+
+    titleRatingsSample.show(100)
 
     println("==========Done==============")
 
