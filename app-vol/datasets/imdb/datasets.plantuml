@@ -1,0 +1,117 @@
+@startuml imdbsets
+
+
+entity TitleBasics {
+    ' alphanumeric unique identifier of the title
+    * tconst:String
+    ' the type/format of the title (e.g. movie, short, tvseries, tvepisode, video, etc)
+    titleType: String
+    ' the more popular title / the title used by the filmmakers on promotional materials at the point of release
+    primaryTitle: String
+    ' original title, in the original language
+    originalTitle: String
+    '  non-adult title; 1: adult title
+    isAdult :Short
+    ' represents the release year of a title. In the case of TV Series, it is the series start year
+    startYear :Short
+    ' TV Series end year. ‘\N’ for all other title types
+    endYear :Short
+    ' primary runtime of the title, in minutes
+    runtimeMinutes:Int
+    ' includes up to three genres associated with the title
+    genres:Array[String]
+}
+
+entity TitleAkas {
+    'a tconst, an alphanumeric unique identifier of the title
+    * titleId :String
+    ' a number to uniquely identify rows for a given titleId
+    ordering: Int
+    ' the localized title
+    title :String
+    ' the region for this version of the title
+    region
+    'the language of the title
+    language :String
+    'Enumerated set of attributes for this alternative title. One or more of the following: "alternative", "dvd", "festival", "tv", "video", "working", "original", "imdbDisplay". New values may be added in the future without warning
+    types:Array[String]
+    'Additional terms to describe this alternative title, not enumerated
+    attributes:Array[String]
+    '0: not original title; 1: original title
+    isOriginalTitle:Option[Short]
+}
+
+TitleAkas *-down-> TitleBasics
+
+entity TitleCrew {
+    ' alphanumeric unique identifier of the title
+    * tconst: String
+    ' director(s) of the given title
+    directors :Array of nconsts
+    ' writer(s) of the given title
+    writers :Array of nconsts
+
+}
+
+TitleCrew *-left-> TitleBasics
+
+entity TitleEpisode {
+    ' alphanumeric identifier of episode
+    tconst:String
+    ' alphanumeric identifier of the parent TV Series
+    parentTconst:String
+    'season number the episode belongs to
+    seasonNumber :Int
+    'episode number of the tconst in the TV series
+    episodeNumber:Int
+}
+
+TitleEpisode *-up-> TitleBasics
+TitleEpisode <-> TitleEpisode
+
+entity TitlePrincipals{
+    'alphanumeric unique identifier of the title
+    tconst :String
+    ' a number to uniquely identify rows for a given titleId
+    ordering :Int
+    'alphanumeric unique identifier of the name/person
+    nconst:String
+    ' the category of job that person was in
+    category :String
+    'the specific job title if applicable, else '\N'
+    job :String
+    'the name of the character played if applicable, else '\N'
+    characters :Option[String]
+}
+
+TitlePrincipals *-> TitleBasics
+
+entity TitleRatings {
+    ' alphanumeric unique identifier of the title
+    tconst:String
+    ' weighted average of all the individual user ratings
+    averageRating:Float
+    ' number of votes the title has received
+    numVotes:Int
+}
+
+TitleRatings *-> TitleBasics
+
+entity NameBasics {
+    ' alphanumeric unique identifier of the name/person
+    nconst :String
+    ' name by which the person is most often credited
+    primaryName
+    ' in YYYY format
+    birthYear :Option[Short]
+    ' in YYYY format if applicable, else '\N'
+    deathYear:Option[Short]
+    ' the top-3 professions of the person
+    primaryProfession :Array[String]
+    ' titles the person is known for
+    knownForTitles :Array of tconsts
+}
+
+NameBasics <-down-* TitlePrincipals
+
+@enduml
