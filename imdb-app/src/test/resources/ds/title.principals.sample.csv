@@ -1,0 +1,267 @@
+tconst	ordering	nconst	category	job	characters
+tt0025136	1	nm0153713	actor		"[\"Charley\"]"
+tt0025136	2	nm0153713	actor		"[\"Hal\"]"
+tt0025136	3	nm0153713	actor		"[\"Henry\"]"
+tt0025136	4	nm0532939	actress		"[\"Betty\"]"
+tt0025136	5	nm0731095	actress		"[\"Mother\"]"
+tt0025136	6	nm0063915	actor		"[\"Boy Looking for Lost Penny\"]"
+tt0025136	7	nm0439852	actress		"[\"Nurse\"]"
+tt0025136	8	nm0153713	director	director	
+tt0025136	9	nm0242554	director		
+tt0025136	10	nm0730018	producer	producer	
+tt0025136	11	nm0179290	cinematographer		
+tt0025136	12	nm0855583	editor	editor	
+tt0084787	1	nm0000621	actor		"[\"MacReady\"]"
+tt0084787	2	nm0000979	actor		"[\"Blair\"]"
+tt0084787	3	nm0202966	actor		"[\"Childs\"]"
+tt0084787	4	nm0557956	actor		"[\"Clark\"]"
+tt0084787	5	nm0141953	actor		"[\"Nauls\"]"
+tt0084787	6	nm0166359	actor		"[\"Palmer\"]"
+tt0084787	7	nm0246004	actor		"[\"Dr. Copper\"]"
+tt0084787	8	nm0356251	actor		"[\"Norris\"]"
+tt0084787	9	nm0540595	actor		"[\"Bennings\"]"
+tt0084787	10	nm0595567	actor		"[\"Garry\"]"
+tt0084787	11	nm0000118	director	director	
+tt0084787	12	nm0484111	writer	screenplay by	
+tt0084787	13	nm0132168	writer	"based on the story \"Who Goes There\" by"	
+tt0084787	14	nm0287759	producer	producer	
+tt0084787	15	nm0877274	producer	producer	
+tt0084787	16	nm0001553	composer		
+tt0084787	17	nm0005678	cinematographer	director of photography	
+tt0084787	18	nm0708916	editor	editor	
+tt0084787	19	nm0200335	casting_director		
+tt0084787	20	nm0516038	production_designer	production_designer	
+tt0089182	1	nm2615854	actress		
+tt0089182	2	nm2608659	actress		
+tt0089182	3	nm0682249	actress		
+tt0089182	4	nm0690610	actor		
+tt0089182	5	nm0016321	actor		
+tt0089182	6	nm0163776	actor		
+tt0089182	7	nm0126864	director		
+tt0089182	8	nm0126864	cinematographer		
+tt0118974	1	nm0001057	actress		"[\"Diana Spencer\"]"
+tt0118974	2	nm0922035	actor		"[\"Rob Naylor\"]"
+tt0118974	3	nm0447848	actor		"[\"Mark Fraser\"]"
+tt0118974	4	nm0799591	actor		"[\"Neil\"]"
+tt0118974	5	nm0247082	actress		"[\"Carol\"]"
+tt0118974	6	nm0355717	self		"[\"Self\"]"
+tt0118974	7	nm0375902	self		"[\"Self\"]"
+tt0118974	8	nm0330601	actress		"[\"Lady Sarah Myers-Booth\"]"
+tt0118974	9	nm0054087	actor		"[\"Richard\"]"
+tt0118974	10	nm0385005	actor		"[\"Neville\"]"
+tt0118974	11	nm0662186	director		
+tt0118974	12	nm0285776	writer	written by	
+tt0118974	13	nm0171027	writer	based on a screenplay by	
+tt0118974	14	nm0140929	producer	producer	
+tt0118974	15	nm0742182	composer		
+tt0118974	16	nm0906189	cinematographer		
+tt0118974	17	nm0614107	editor		
+tt0118974	18	nm0454585	casting_director		
+tt0118974	19	nm0409891	casting_director	casting_director	
+tt0118974	20	nm0235715	production_designer		
+tt0123111	1	nm0632227	actress		"[\"Pippi Långstrump\"]"
+tt0123111	2	nm0675627	actress		"[\"Annika\"]"
+tt0123111	3	nm0839090	actor		"[\"Tommy\"]"
+tt0123111	4	nm0873549	actress		"[\"Tant Pruselius\"]"
+tt0123111	5	nm0873549	actress		"[\"Prussiluskan\"]"
+tt0123111	6	nm0163583	actor		"[\"Dunder-Karlsson\"]"
+tt0123111	7	nm0261375	actor		"[\"Blom\"]"
+tt0123111	8	nm0426499	actor		"[\"Policeman Kling\"]"
+tt0123111	9	nm0339515	actor		"[\"Policeman Klang\"]"
+tt0123111	10	nm0645077	actor		"[\"Mr. Settergren\"]"
+tt0123111	11	nm0920481	actress		"[\"Mrs. Settergren\"]"
+tt0123111	12	nm0375224	director		
+tt0123111	13	nm0511807	writer	"novels \"Pippi Långstrump\" and \"Pippi Långstrump går ombord\""	
+tt0123111	14	nm0509732	producer	producer	
+tt0123111	15	nm0634989	producer	producer	
+tt0123111	16	nm0115821	composer		
+tt0123111	17	nm0253301	composer		
+tt0123111	18	nm0423966	composer		
+tt0123111	19	nm0074612	cinematographer		
+tt0123111	20	nm0675601	editor		
+tt0123111	21	nm1561346	editor		
+tt0123111	22	nm0804639	production_designer		
+tt0123117	1	nm0725257	director		
+tt0123117	2	nm0725257	writer	writer	
+tt0123117	3	nm0725257	producer	producer	
+tt0123117	4	nm0617774	cinematographer		
+tt0123117	5	nm0725257	editor		
+tt0151789	1	nm0654775	director		
+tt0151789	2	nm0451658	director	animation director	
+tt0151789	3	nm11102523	director	documentary director	
+tt0151789	4	nm0654775	writer		
+tt0151789	5	nm11102523	writer		
+tt0151789	6	nm0436063	composer	composer	
+tt0151789	7	nm0657106	composer		
+tt0151789	8	nm0018913	cinematographer		
+tt0151789	9	nm1141229	cinematographer		
+tt0151789	10	nm14063943	cinematographer		
+tt0151789	11	nm13399660	cinematographer		
+tt0151789	12	nm3888799	editor		
+tt0151789	13	nm2777723	production_designer		
+tt0151789	14	nm0616555	production_designer		
+tt0151789	15	nm0958501	production_designer		
+tt0152575	1	nm0421165	director		
+tt0152575	2	nm0336682	writer	script	
+tt0152575	3	nm0834055	writer	commentary	
+tt0152575	4	nm0146709	producer	producer	
+tt0152575	5	nm0189159	cinematographer		
+tt0152575	6	nm0288626	cinematographer	cinematographer	
+tt0152575	7	nm0285188	editor	editor	
+tt0205405	1	nm1358887	actress		
+tt0205405	2	nm1359585	actress		
+tt0205405	3	nm0955486	actor		
+tt0205405	4	nm0508496	director		
+tt0205405	5	nm0944463	writer	writer	
+tt0205405	6	nm1973718	writer		
+tt0227694	1	nm0207023	actor		"[\"Pedro Marti\"]"
+tt0227694	2	nm0750930	actor		"[\"Anthony Arndold\"]"
+tt0227694	3	nm0137728	actor		"[\"Chito Cardona\"]"
+tt0227694	4	nm0305894	actor		"[\"Tommy Green\"]"
+tt0227694	5	nm0050192	actress		"[\"Joanna Green\"]"
+tt0227694	6	nm0901808	actress		"[\"Linda Arnold\"]"
+tt0227694	7	nm0090872	actress		"[\"Elizabeth\"]"
+tt0227694	8	nm6516845	actor		"[\"Larsen\"]"
+tt0227694	9	nm0613933	actor		"[\"Jefe Torre\"]"
+tt0227694	10	nm0207023	director		
+tt0227694	11	nm0316037	composer		
+tt0237156	1	nm0246068	actress		"[\"Marina Koshevaya\"]"
+tt0237156	2	nm0515103	actor		"[\"Afanasiy Gusarov\"]"
+tt0237156	3	nm0947840	actor		"[\"Dmitriy Polunin\"]"
+tt0237156	4	nm0738998	actor		"[\"Andrey Andreyevich - glavnyy trener\"]"
+tt0237156	5	nm0881865	actress		"[\"Katerina - maty Mariny\"]"
+tt0237156	6	nm0415991	actor		"[\"Petrovich\"]"
+tt0237156	7	nm0804706	actor		"[\"Nikolay Vasilyevich - direktor\"]"
+tt0237156	8	nm0468835	actor		"[\"Auktsionist\"]"
+tt0237156	9	nm0218849	actor		"[\"Trubnikov\"]"
+tt0237156	10	nm0473054	actor		"[\"Ivan Nikonovich - direktor ippodroma\"]"
+tt0237156	11	nm0755631	director		
+tt0237156	12	nm0947899	writer		
+tt0237156	13	nm0755631	writer		
+tt0237156	14	nm0955908	composer		
+tt0237156	15	nm0438986	cinematographer		
+tt0237156	16	nm0412129	editor		
+tt0237156	17	nm0122241	production_designer		
+tt0243505	1	nm0019482	actor		"[\"Kavi Raj\"]"
+tt0243505	2	nm0451862	actress		"[\"Mrinalvati\"]"
+tt0243505	3	nm0592789	actress		"[\"Bhillam's Wife\"]"
+tt0243505	4	nm0595271	actor		"[\"Munja\"]"
+tt0243505	5	nm0621861	actor		"[\"Raja Bhoj\"]"
+tt0243505	6	nm0695272	actor		"[\"Tailap\"]"
+tt0243505	7	nm1242253	actress		"[\"Vilas\"]"
+tt0243505	8	nm0802144	actor		"[\"Bhillam\"]"
+tt0243505	9	nm0595271	director		
+tt0243505	10	nm0613232	writer	story	
+tt0243505	11	nm2012605	writer	dialogue	
+tt0243505	12	nm0595271	producer	producer	
+tt0243505	13	nm0222487	composer	composer	
+tt0243505	14	nm0315580	composer		
+tt0243505	15	nm0765495	cinematographer	cinematographer	
+tt0245691	1	nm0158112	actor		
+tt0245691	2	nm0838517	actress		
+tt0245691	3	nm0837674	actress		
+tt0245691	4	nm0764871	actor		
+tt0245691	5	nm0004472	actor		
+tt0245691	6	nm0707723	actor		
+tt0245691	7	nm0710623	actor		
+tt0245691	8	nm0810426	actress		
+tt0245691	9	nm0892742	actor		
+tt0245691	10	nm0474823	director		
+tt0245691	11	nm0766463	writer	dialogue	
+tt0245691	12	nm0474823	producer	producer	
+tt0245691	13	nm0005998	composer		
+tt0245691	14	nm1701176	cinematographer	cinematographer	
+tt0245691	15	nm0044597	editor		
+tt0245691	16	nm0619313	casting_director		
+tt0255193	1	nm0310155	actress		"[\"The Girl Spy\"]"
+tt0255193	2	nm0646058	director		
+tt0255193	3	nm0310155	writer		
+tt0272551	1	nm0006752	actor		"[\"Host\"]"
+tt0272551	2	nm0491048	archive_footage		"[\"Self\"]"
+tt0272551	3	nm0001316	archive_footage		"[\"Self\"]"
+tt0272551	4	nm0000050	archive_footage		"[\"Self\"]"
+tt0272551	5	nm0555617	archive_footage		"[\"Self\"]"
+tt0272551	6	nm0555597	archive_footage		"[\"Self\"]"
+tt0272551	7	nm0555688	archive_footage		"[\"Self\"]"
+tt0272551	8	nm0122675	archive_footage		"[\"Self\"]"
+tt0272551	9	nm0213496	archive_footage		"[\"Dorothy (segment \\\"Our Gang\\\")\"]"
+tt0272551	10	nm0020555	archive_footage		"[\"Self\"]"
+tt0272551	11	nm0074759	director		
+tt0272551	12	nm0365174	producer	producer	
+tt0272551	13	nm0647085	editor		
+tt0282537	1	nm0001283	self		"[\"Self - Host\"]"
+tt0282537	2	nm1261920	self		"[\"Self - Quarterback Coach\"]"
+tt0282537	3	nm1261920	self		"[\"Offensive Coordinator\"]"
+tt0282537	4	nm1259763	self		"[\"Self\"]"
+tt0282537	5	nm2354030	self		"[\"Self\"]"
+tt0282537	6	nm2349089	self		"[\"Self\"]"
+tt0282537	7	nm2356550	self		"[\"Self\"]"
+tt0282537	8	nm1260742	self		"[\"Self - Camp Director\"]"
+tt0282537	9	nm1218686	self		"[\"Self\"]"
+tt0282537	10	nm2353086	self		"[\"Self\"]"
+tt0282537	11	nm1262051	self		"[\"Self - Assistant Coach\"]"
+tt0282537	12	nm0822540	director		
+tt0282537	13	nm0281133	writer		
+tt0282537	14	nm0822540	writer		
+tt0282537	15	nm0822540	producer	producer	
+tt0282537	16	nm1034906	producer	producer	
+tt0282537	17	nm0065408	composer		
+tt0282537	18	nm0999546	editor		
+tt0313640	1	nm1364661	actor		"[\"William\"]"
+tt0313640	2	nm1364241	actress		"[\"Marian\"]"
+tt0313640	3	nm1362934	actor		"[\"Junior\"]"
+tt0313640	4	nm2060249	actress		"[\"Lunch Counter Customer\"]"
+tt0313640	5	nm3300917	actor		"[\"Officer Hollifield\"]"
+tt0313640	6	nm1180221	actor		"[\"Farmer in straw hat\"]"
+tt0313640	7	nm2051429	actress		"[\"Lunch Counter Customer in Blue\"]"
+tt0313640	8	nm1478411	actress		"[\"Angry Lunch Counter Customer\"]"
+tt0313640	9	nm1090850	actor		"[\"Short Order Cook\"]"
+tt0313640	10	nm1208353	director		
+tt0313640	11	nm1208353	writer		
+tt0313640	12	nm0971588	composer		
+tt0313640	13	nm1370385	cinematographer	cinematographer	
+tt0313640	14	nm0232669	editor		
+tt0313640	15	nm3081470	production_designer		
+tt0338773	1	nm1169967	actress		"[\"Rachel Bishop\"]"
+tt0338773	2	nm1169967	actress		"[\"Self\"]"
+tt0338773	3	nm0360815	actor		"[\"Ronald\"]"
+tt0338773	4	nm0360815	actor		"[\"Self\"]"
+tt0338773	5	nm1162095	actor		"[\"Johnathon Kipplinger\"]"
+tt0338773	6	nm1162095	actor		"[\"Self\"]"
+tt0338773	7	nm1166310	actor		"[\"Freddy\"]"
+tt0338773	8	nm1166310	actor		"[\"Self\"]"
+tt0338773	9	nm1056727	actress		"[\"Emily Bishop\"]"
+tt0338773	10	nm1056727	actress		"[\"Self\"]"
+tt0338773	11	nm1164269	self		"[\"Self\"]"
+tt0338773	12	nm1169197	self		"[\"Self\"]"
+tt0338773	13	nm1169197	self		"[\"Orlando\"]"
+tt0338773	14	nm1169243	self		"[\"Self\"]"
+tt0338773	15	nm1166666	self		"[\"Self\"]"
+tt0338773	16	nm1123459	actor		"[\"Fangoria Weekend of Horrors\"]"
+tt0338773	17	nm1168186	director		
+tt0338773	18	nm1168186	producer	producer	
+tt0338773	19	nm1168399	producer	producer	
+tt0338773	20	nm1167266	composer		
+tt0338773	21	nm1277544	composer		
+tt0338773	22	nm0004036	cinematographer	cinematographer	
+tt0338773	23	nm0803913	cinematographer		
+tt0338773	24	nm1168399	cinematographer	cinematographer	
+tt0338773	25	nm1168186	editor		
+tt0338773	26	nm1168399	editor		
+tt0398243	1	nm1543115	actress		"[\"Eleanor\"]"
+tt0398243	2	nm1542404	actor		"[\"Erik\"]"
+tt0398243	3	nm1543238	actress		"[\"Donna\"]"
+tt0398243	4	nm0385769	actor		"[\"City Official\"]"
+tt0398243	5	nm1361437	actor		"[\"Harold\"]"
+tt0398243	6	nm1361437	actor		"[\"Jerome\"]"
+tt0398243	7	nm0449669	actress		"[\"Dee Dee\"]"
+tt0398243	8	nm1543321	actress		"[\"Kayla\"]"
+tt0398243	9	nm1024762	actress		"[\"Kelly\"]"
+tt0398243	10	nm0793290	actor		"[\"Charles\"]"
+tt0398243	11	nm1541951	actress		"[\"Gladys\"]"
+tt0398243	12	nm1024762	director		
+tt0398243	13	nm1024762	writer		
+tt0398243	14	nm0793290	producer	producer	
+tt0398243	15	nm0793290	composer		
+tt0398243	16	nm1024762	cinematographer		
+tt0398243	17	nm1024762	editor		
