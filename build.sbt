@@ -16,6 +16,15 @@ lazy val compileSettings =
     "-Ywarn-dead-code"
   )
 
+fork in Test := true
+
+javaOptions ++= Seq(
+  "-Xms8G",
+  "-Xmx8G",
+  "-XX:MaxPermSize=4048M",
+  "-XX:+CMSClassUnloadingEnabled"
+)
+
 lazy val sparkIMDbApp = (project in file("imdb-app"))
   .settings(compileSettings)
 
