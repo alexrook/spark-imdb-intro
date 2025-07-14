@@ -8,25 +8,27 @@ import org.apache.spark.sql.functions._
 import ru.neoflex.imdbApp.models.config.AppConfig
 import org.apache.spark.sql.Encoder
 
-/** создание тестовых данных
+/** создание тестовых данных из IMDB Dataset's
   */
 object ImdbSamplesMod {
 
   import ru.neoflex.imdbApp.dataset._
   import ru.neoflex.imdbApp.models._
+  import ru.neoflex.imdbApp.models.conv._
 
   val SEED = 123L
 
   def run(appConfig: AppConfig): Unit = {
 
-    val samplesDir = s"${appConfig.files.datasetDir}/samples"
     val sparkConf =
       new SparkConf().setAppName("ImdbDatasetSamples")
 
     implicit val spark: SparkSession =
       SparkSession.builder.config(sparkConf).getOrCreate()
 
-    val imdbDataSets: ImdbDataSets =
+    val samplesDir = s"${appConfig.files.datasetDir}/samples"
+
+    val imdbDataSets: ImdbDataSets = //наборы данных от IMDB
       ImdbDataSets(
         appConfig.files.datasetDir,
         datasetFileEx = "tsv",
@@ -50,6 +52,7 @@ object ImdbSamplesMod {
 
     write(titleRatingsSample, samplesDir, "title.rating.sample")(identity)
 
+    //-----------
     //я хочу фильмы только с рейтингом
     val titlesBasicWithRating: Dataset[TitleBasicsItem] =
       imdbDataSets.titleBasicsDataset
@@ -61,24 +64,11 @@ object ImdbSamplesMod {
 
     titlesBasicWithRating.show(20)
 
-    write(titlesBasicWithRating, samplesDir, "title.basic.sample") {
-      item: TitleBasicsItem =>
-        TitleBasicsRow(
-          tconst = item.tconst,
-          titleType = item.titleType,
-          primaryTitle = item.primaryTitle,
-          originalTitle = item.originalTitle,
-          isAdult = item.isAdult.map {
-            case true => 1
-            case _    => 0
-          },
-          startYear = item.startYear,
-          endYear = item.endYear,
-          runtimeMinutes = item.runtimeMinutes,
-          genres = item.genres.mkString(",")
-        )
-    }
+    write(titlesBasicWithRating, samplesDir, "title.basic.sample")(
+      convTitleBasicsItemToTitleBasicsRow
+    )
 
+    //-----------
     val titlePrincipalsSamples: Dataset[TitlePrincipalsItem] =
       imdbDataSets.titlePrincipalsDataset
         .join(
@@ -99,6 +89,7 @@ object ImdbSamplesMod {
     titlePrincipalsSamples.show(40)
     write(titlePrincipalsSamples, samplesDir, "title.principals")(identity)
 
+    //-----------
     val nameBasicSamples: Dataset[NameBasicItem] =
       imdbDataSets.nameBasicsDataset
         .join(
@@ -111,17 +102,62 @@ object ImdbSamplesMod {
 
     nameBasicSamples.show(40)
 
-    write(nameBasicSamples, samplesDir, "name.basics") {
-      case item: NameBasicItem =>
-        NameBasicRow(
-          nconst = item.nconst,
-          primaryName = item.primaryName,
-          birthYear = item.birthYear,
-          deathYear = item.deathYear,
-          primaryProfession = item.primaryProfession.mkString(","),
-          knownForTitles = item.knownForTitles.mkString(",")
+    write(nameBasicSamples, samplesDir, "name.basics")(
+      convNameBasicItemToNameBasicRow
+    )
+
+    //-----------TV Series-----------------------------------
+
+    val seriesSamplesDir: String =
+      s"${samplesDir}/series" //образцы для работы с сериалами отдельно
+
+    val titleEpisodeSamples: Dataset[TitleEpisodeItem] =
+      imdbDataSets.titleEpisodeDataset
+        .sample(
+          withReplacement = false,
+          fraction = 1e-4,
+          SEED
         )
+        .withColumn("rowNum", row_number().over(Window.orderBy("tconst")))
+        .filter(col("rowNum") < 21)
+        .as[TitleEpisodeItem]
+        .cache()
+
+    titleEpisodeSamples.show(20)
+
+    write(titleEpisodeSamples, seriesSamplesDir, "title.episode")(
+      identity
+    )
+
+    val titleBasicForEpisodeSamples: Dataset[TitleBasicsItem] = {
+      val episodesBasic: Dataset[TitleBasicsItem] =
+        imdbDataSets.titleBasicsDataset
+          .join(
+            broadcast(titleEpisodeSamples),
+            "tconst",
+            "left_semi"
+          )
+          .as[TitleBasicsItem]
+
+      val parentBasic: Dataset[TitleBasicsItem] =
+        imdbDataSets.titleBasicsDataset
+          .alias("titleBasic")
+          .join(
+            broadcast(titleEpisodeSamples.alias("episode")),
+            col("titleBasic.tconst") === col("episode.parentTconst"),
+            "left_semi"
+          )
+          .as[TitleBasicsItem]
+
+      episodesBasic.union(parentBasic)
+
     }
+
+    titleBasicForEpisodeSamples.show(1000)
+
+    write(titleBasicForEpisodeSamples, seriesSamplesDir, "title.basic")(
+      convTitleBasicsItemToTitleBasicsRow
+    )
 
     println("==========Samples generation done==============")
 
