@@ -114,5 +114,28 @@ class StatsTest extends AnyWordSpec with DatasetSuiteBase with SamplesDatasets {
 
     }
 
+    "return averageRatingsByActor correctly" in {
+      val actual: Dataset[Row] =
+        Stats
+          .averageRatingsByActor(
+            nameBasics = imdbDataSetSamples.nameBasicsDataset,
+            titlePrincipals = imdbDataSetSamples.titlePrincipalsDataset,
+            titleRatings = imdbDataSetSamples.titleRatingsDataset,
+            titleBasic = imdbDataSetSamples.titleBasicsDataset
+          )
+          .cache()
+
+      actual.show(500)
+
+      //имена должны не дублироваться
+      val nconsts: Array[String] =
+        actual.map(_.getAs[String]("nconst")).collect()
+
+      assert(nconsts.toSet.size == actual.count())
+
+      //TODO: check AvgRating
+
+    }
+
   }
 }
