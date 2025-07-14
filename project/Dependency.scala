@@ -11,9 +11,12 @@ object Dependency {
   }
 
   lazy val loggingLibs = {
-    val slf4jV = "2.0.13"
+    val jacksonV = "2.15.2"
+    val log4jV   = "2.20.0"
+
     Seq(
-      "org.slf4j" % "slf4j-api" % slf4jV
+      "org.apache.logging.log4j"         % "log4j-api"               % log4jV,
+      "org.apache.logging.log4j"         % "log4j-core"              % log4jV
     )
   }
 
