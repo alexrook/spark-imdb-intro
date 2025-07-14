@@ -1,4 +1,4 @@
-package ru.neoflex.imdbApp
+package ru.neoflex.imdbApp.app
 
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
@@ -109,7 +109,8 @@ object Stats {
   def ratingCount(
     titleRatings: Dataset[TitleRatingItem]
   ) = {
-    val window = Window.orderBy(col("averageRating").desc)
+    val window = Window
+      .orderBy(col("averageRating").desc)
     //Функция NTILE используется для распределения строк
     //из результирующего набора данных
     //в указанное количество равномерных групп или корзин.
@@ -118,6 +119,7 @@ object Stats {
         "bucket",
         ntile(5).over(window)
       )
+      .repartition(col("bucket"))
       .groupBy("bucket")
       .agg(count("tconst"), avg("averageRating").as("AvgRating"))
 
