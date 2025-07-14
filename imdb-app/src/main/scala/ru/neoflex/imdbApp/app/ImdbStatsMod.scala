@@ -10,7 +10,14 @@ object ImdbStatsMod {
   def run(appConfig: AppConfig): Unit = {
 
     implicit val spark: SparkSession =
-      SparkSession.builder.appName(appConfig.name).getOrCreate()
+      SparkSession.builder
+        .appName(appConfig.name)
+        .config(
+          "spark.serializer",
+          "org.apache.spark.serializer.KryoSerializer"
+        )
+        .config("spark.kryo.registrator", "ru.neoflex.imdbApp.kryo.KryoReg")
+        .getOrCreate()
 
     val imdbDataSets: ImdbDataSets =
       ImdbDataSets(
@@ -52,7 +59,14 @@ object ImdbStatsMod {
 
     Stats
       .getLivingPersons(nameBasicsDataset)
-      .show()
+    //  .show()
+
+    Stats
+      .getSeriesNames(
+        titleBasic = titleBasicsDataset,
+        titleEpisode = titleEpisodeDataset
+      )
+      .show(100)
 
     spark.stop()
   }

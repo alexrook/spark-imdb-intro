@@ -37,74 +37,74 @@ object ImdbSamplesMod {
 
     import spark.implicits._
 
-    val titleRatingsSample: Dataset[TitleRatingItem] =
-      imdbDataSets.titleRatingsDataset
-        .sample(
-          withReplacement = false,
-          fraction = 1e-4,
-          SEED
-        )
-        .withColumn("rowNum", row_number().over(Window.orderBy("tconst")))
-        .filter(col("rowNum") < 21)
-        .as[TitleRatingItem]
+    // val titleRatingsSample: Dataset[TitleRatingItem] =
+    //   imdbDataSets.titleRatingsDataset
+    //     .sample(
+    //       withReplacement = false,
+    //       fraction = 1e-4,
+    //       SEED
+    //     )
+    //     .withColumn("rowNum", row_number().over(Window.orderBy("tconst")))
+    //     .filter(col("rowNum") < 21)
+    //     .as[TitleRatingItem]
 
-    titleRatingsSample.show(20)
+    // titleRatingsSample.show(20)
 
-    write(titleRatingsSample, samplesDir, "title.rating.sample")(identity)
+    // write(titleRatingsSample, samplesDir, "title.rating.sample")(identity)
 
-    //-----------
-    //я хочу фильмы только с рейтингом
-    val titlesBasicWithRating: Dataset[TitleBasicsItem] =
-      imdbDataSets.titleBasicsDataset
-        .filter(!_.titleType.contains("tvEpisode")) //и не сериалы
-        //Unlike other joins, the left semi join does not include any columns from the right DataFrame in the result set
-        .join(broadcast(titleRatingsSample), "tconst", "left_semi")
-        .as[TitleBasicsItem]
-        .cache()
+    // //-----------
+    // //я хочу фильмы только с рейтингом
+    // val titlesBasicWithRating: Dataset[TitleBasicsItem] =
+    //   imdbDataSets.titleBasicsDataset
+    //     .filter(!_.titleType.contains("tvEpisode")) //и не сериалы
+    //     //Unlike other joins, the left semi join does not include any columns from the right DataFrame in the result set
+    //     .join(broadcast(titleRatingsSample), "tconst", "left_semi")
+    //     .as[TitleBasicsItem]
+    //     .cache()
 
-    titlesBasicWithRating.show(20)
+    // titlesBasicWithRating.show(20)
 
-    write(titlesBasicWithRating, samplesDir, "title.basic.sample")(
-      convTitleBasicsItemToTitleBasicsRow
-    )
+    // write(titlesBasicWithRating, samplesDir, "title.basic.sample")(
+    //   convTitleBasicsItemToTitleBasicsRow
+    // )
 
-    //-----------
-    val titlePrincipalsSamples: Dataset[TitlePrincipalsItem] =
-      imdbDataSets.titlePrincipalsDataset
-        .join(
-          broadcast(titlesBasicWithRating),
-          "tconst",
-          "left_semi"
-        )
-        .withColumn( //берем от каждого фильма >
-          "rowNum",
-          row_number().over(Window.partitionBy(col("tconst")).orderBy("nconst"))
-        )
-        .filter(
-          col("rowNum") < 3 //только по 2 principals
-        )
-        .as[TitlePrincipalsItem]
-        .cache()
+    // //-----------
+    // val titlePrincipalsSamples: Dataset[TitlePrincipalsItem] =
+    //   imdbDataSets.titlePrincipalsDataset
+    //     .join(
+    //       broadcast(titlesBasicWithRating),
+    //       "tconst",
+    //       "left_semi"
+    //     )
+    //     .withColumn( //берем от каждого фильма >
+    //       "rowNum",
+    //       row_number().over(Window.partitionBy(col("tconst")).orderBy("nconst"))
+    //     )
+    //     .filter(
+    //       col("rowNum") < 3 //только по 2 principals
+    //     )
+    //     .as[TitlePrincipalsItem]
+    //     .cache()
 
-    titlePrincipalsSamples.show(40)
-    write(titlePrincipalsSamples, samplesDir, "title.principals")(identity)
+    // titlePrincipalsSamples.show(40)
+    // write(titlePrincipalsSamples, samplesDir, "title.principals")(identity)
 
-    //-----------
-    val nameBasicSamples: Dataset[NameBasicItem] =
-      imdbDataSets.nameBasicsDataset
-        .join(
-          broadcast(titlePrincipalsSamples),
-          "nconst",
-          "left_semi"
-        )
-        .as[NameBasicItem]
-        .cache()
+    // //-----------
+    // val nameBasicSamples: Dataset[NameBasicItem] =
+    //   imdbDataSets.nameBasicsDataset
+    //     .join(
+    //       broadcast(titlePrincipalsSamples),
+    //       "nconst",
+    //       "left_semi"
+    //     )
+    //     .as[NameBasicItem]
+    //     .cache()
 
-    nameBasicSamples.show(40)
+    // nameBasicSamples.show(40)
 
-    write(nameBasicSamples, samplesDir, "name.basics")(
-      convNameBasicItemToNameBasicRow
-    )
+    // write(nameBasicSamples, samplesDir, "name.basics")(
+    //   convNameBasicItemToNameBasicRow
+    // )
 
     //-----------TV Series-----------------------------------
 

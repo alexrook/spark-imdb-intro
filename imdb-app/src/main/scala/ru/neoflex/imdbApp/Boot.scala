@@ -8,6 +8,7 @@ import pureconfig.error.ThrowableFailure
 import pureconfig.generic.auto._
 
 import scala.util.Properties
+import ru.neoflex.imdbApp.kryo.KryoEx2
 
 object Boot {
   import ru.neoflex.imdbApp.models.config._
@@ -56,6 +57,9 @@ object Boot {
 
         case AppModulesEnum.Samples =>
           ImdbSamplesMod.run(mergedWithCommandLineAppCfg)
+
+        case AppModulesEnum.KryoEx2 =>
+          KryoEx2.run(mergedWithCommandLineAppCfg)
 
       }
 

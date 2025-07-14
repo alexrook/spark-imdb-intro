@@ -147,7 +147,7 @@ object Stats {
   def getLivingPersons(
     nameBasicsDataset: Dataset[NameBasicItem]
   )(implicit spark:    SparkSession) = {
-    spark.udf.register("how_long_is_living", udf(howLongIsLiving))
+    spark.udf.register("how_long_is_living", functions.udf(howLongIsLiving))
 
     nameBasicsDataset
       .withColumn(
@@ -155,6 +155,41 @@ object Stats {
         expr("how_long_is_living(birthYear,deathYear)")
       )
       .filter(expr("im_alive is not null"))
+
+  }
+
+  def getSeriesNames(
+    titleBasic:     Dataset[TitleBasicsItem],
+    titleEpisode:   Dataset[TitleEpisodeItem]
+  )(implicit spark: SparkSession) = {
+    spark.udf.register("SeriesAgg", functions.udaf(udf.SeriesAgg))
+
+    val titlesWithNames: DataFrame =
+      titleBasic.select("tconst", "primaryTitle")
+
+    titleEpisode
+      .select(
+        col("tconst").alias("EpisodeTconst"),
+        col("parentTconst").alias("EpisodeParentTconst")
+      )
+      .join(
+        titlesWithNames.alias("tNamesA"),
+        col("EpisodeTconst") === col("tNamesA.tconst")
+      )
+      .join(
+        titlesWithNames.alias("tNamesB"),
+        col("EpisodeParentTconst") === col("tNamesB.tconst")
+      )
+      .groupBy(
+        col("EpisodeParentTconst"),
+        col("tNamesB.primaryTitle").as("SeriesName")
+      )
+      .agg(expr("SeriesAgg(tNamesA.primaryTitle)").as("EpisodeNames"))
+      .select(
+        col("EpisodeParentTconst"),
+        col("EpisodeNames"),
+        col("SeriesName")
+      )
 
   }
 
