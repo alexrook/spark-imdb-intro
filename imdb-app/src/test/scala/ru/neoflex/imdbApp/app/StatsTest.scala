@@ -1,12 +1,12 @@
 package ru.neoflex.imdbApp.app
 
 import com.holdenkarau.spark.testing.DatasetSuiteBase
-import org.scalatest.wordspec.AnyWordSpec
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.Dataset
+import org.apache.spark.sql.Row
 import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
 import ru.neoflex.imdbApp.dataset.SamplesDatasets
-import org.apache.spark.sql.{ Dataset, Row }
-import org.apache.spark.sql.SparkSession
-import spire.std.array
 
 class StatsTest extends AnyWordSpec with DatasetSuiteBase with SamplesDatasets {
 
@@ -134,6 +134,21 @@ class StatsTest extends AnyWordSpec with DatasetSuiteBase with SamplesDatasets {
       assert(nconsts.toSet.size == actual.count())
 
       //TODO: check AvgRating
+
+    }
+
+    "return getLivingPersons correctly" in {
+      val actual: DataFrame =
+        Stats
+          .getLivingPersons(imdbDataSetSamples.nameBasicsDataset)(spark)
+          .cache()
+
+      actual.show()
+
+      val shoulbeNotNull =
+        actual.map(_.getAs[Short]("im_alive")).collect()
+
+      assert(shoulbeNotNull.forall(x => Option(x).nonEmpty))
 
     }
 

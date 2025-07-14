@@ -3,6 +3,7 @@ package ru.neoflex.imdbApp.app
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.expressions.Window
+import java.time.LocalDate
 
 object Stats {
   import ru.neoflex.imdbApp.models._
@@ -129,4 +130,32 @@ object Stats {
       )
 
   }
+
+  val howLongIsLiving: (Option[Short], Option[Short]) => Option[Short] =
+    (birthYear: Option[Short], deathYear: Option[Short]) =>
+      for {
+        nowYear <-
+          //option inversion
+          deathYear.fold(Option(LocalDate.now().getYear().toShort))(_ =>
+            Option.empty[Short]
+          )
+
+        bYear <- birthYear
+
+      } yield (nowYear - bYear).toShort
+
+  def getLivingPersons(
+    nameBasicsDataset: Dataset[NameBasicItem]
+  )(implicit spark:    SparkSession) = {
+    spark.udf.register("how_long_is_living", udf(howLongIsLiving))
+
+    nameBasicsDataset
+      .withColumn(
+        "im_alive",
+        expr("how_long_is_living(birthYear,deathYear)")
+      )
+      .filter(expr("im_alive is not null"))
+
+  }
+
 }

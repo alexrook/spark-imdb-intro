@@ -48,7 +48,11 @@ object ImdbStatsMod {
 
     Stats
       .ratingCount(titleRatings = titleRatingsDataset)
-      .show(500)
+    //  .show(500)
+
+    Stats
+      .getLivingPersons(nameBasicsDataset)
+      .show()
 
     spark.stop()
   }
