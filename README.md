@@ -120,8 +120,7 @@ SPARK_MASTER=spark://0.0.0.0:7077
 
 ## Conclusion
 
-Проект нуждается в вашем feedback. Пожалуйста пишите его на почту `agrachev@neoflex.ru` или в комментариях [gitlab](https://neogit.neoflex.ru/agrachev/spark-intro). Вы также можете отметить Project Goals в этом документе, которые, по вашему мнению, выполнены.
-
+Проект нуждается в вашем feedback.
 
 
 
