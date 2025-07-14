@@ -13,15 +13,15 @@ object Dependency {
   lazy val loggingLibs = {
     val slf4jV = "2.0.13"
     Seq(
-      "org.slf4j" % "slf4j-api" % slf4jV,
+      "org.slf4j" % "slf4j-api" % slf4jV
     )
   }
 
   lazy val pureConfigLibs = {
-   val pureConfigV = "0.17.6"
+    val pureConfigV = "0.17.6"
     Seq(
-     "com.github.pureconfig" %% "pureconfig" % "0.17.6"
-        )
+      "com.github.pureconfig" %% "pureconfig" % "0.17.6"
+    )
   }
 
   object SparkLibs {
@@ -29,7 +29,8 @@ object Dependency {
 
     lazy val sparkCoreDeps: Seq[ModuleID] =
       Seq(
-	"org.apache.spark" %% "spark-sql" % sparkV
+        "org.apache.spark" %% "spark-core" % sparkV,
+        "org.apache.spark" %% "spark-sql"  % sparkV
       )
   }
 
