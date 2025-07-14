@@ -50,7 +50,6 @@ enablePlugins(AssemblyPlugin)
 
 assembly / assemblyMergeStrategy := {
   case "logback-test.xml"                                  => MergeStrategy.discard
-  case PathList(ps @ _*) if ps.last == "module-info.class" => MergeStrategy.discard // для зависимостей с Java 9+
   case PathList(ps @ _*) if ps.last endsWith ".conf"       => MergeStrategy.concat
   case PathList(ps @ _*) if ps.last endsWith ".properties" => MergeStrategy.concat
   case x                                                   => MergeStrategy.defaultMergeStrategy(x)
