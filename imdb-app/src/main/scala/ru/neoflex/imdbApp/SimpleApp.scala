@@ -1,12 +1,11 @@
 package ru.neoflex.imdbApp
 
-import org.apache.spark.sql.Dataset
-
 object SimpleApp {
 
   import org.apache.spark.sql.SparkSession
-
+  import org.apache.spark.sql.Dataset
   import org.apache.spark.sql.Encoder
+  import org.apache.spark.sql.functions._
 
   import ru.neoflex.imdbApp.models._
 
@@ -65,7 +64,8 @@ object SimpleApp {
               isAdult,
               startYear,
               endYear,
-              runtimeMinutes
+              runtimeMinutes,
+              genres
             ) =>
           TitleBasicsItem(
             tconst = tconst,
@@ -75,7 +75,8 @@ object SimpleApp {
             isAdult = isAdult.map(_ > 0),
             startYear = startYear,
             endYear = endYear,
-            runtimeMinutes = runtimeMinutes
+            runtimeMinutes = runtimeMinutes,
+            genres = genres.asList
           )
       }.cache()
 
@@ -102,13 +103,15 @@ object SimpleApp {
     val titleRatingsDataset: Dataset[TitleRatingItem] =
       readIMDBDataset(titleRatingsTSV)(identity[TitleRatingItem]).cache()
 
-    nameBasicsDataset.show()
-    titleAkasDataset.show()
-    titleBasicsDataset.show()
-    titleCrewDataset.show()
-    titleEpisodeDataset.show()
-    titlePrincipalsDataset.show()
+    // nameBasicsDataset.show()
+    // titleAkasDataset.show()
+    // titleBasicsDataset.show()
+    // titleCrewDataset.show()
+    // titleEpisodeDataset.show()
+    // titlePrincipalsDataset.show()
     titleRatingsDataset.show()
+
+    TiteRank(titleRatingsDataset).randRowNum
 
     spark.stop()
   }
