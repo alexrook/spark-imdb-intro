@@ -54,8 +54,8 @@ object ImdbSamplesMod {
     val titlesBasicWithRating: Dataset[TitleBasicsItem] =
       imdbDataSets.titleBasicsDataset
         .filter(!_.titleType.contains("tvEpisode")) //и не сериалы
-        .join(broadcast(titleRatingsSample), "tconst")
-        .drop("averageRating", "numVotes", "rowNum")
+        //Unlike other joins, the left semi join does not include any columns from the right DataFrame in the result set
+        .join(broadcast(titleRatingsSample), "tconst", "left_semi")
         .as[TitleBasicsItem]
         .cache()
 
@@ -83,7 +83,8 @@ object ImdbSamplesMod {
       imdbDataSets.titlePrincipalsDataset
         .join(
           broadcast(titlesBasicWithRating),
-          "tconst"
+          "tconst",
+          "left_semi"
         )
         .withColumn( //берем от каждого фильма >
           "rowNum",
@@ -102,7 +103,8 @@ object ImdbSamplesMod {
       imdbDataSets.nameBasicsDataset
         .join(
           broadcast(titlePrincipalsSamples),
-          "nconst"
+          "nconst",
+          "left_semi"
         )
         .as[NameBasicItem]
         .cache()
