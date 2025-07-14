@@ -15,7 +15,7 @@ object ImdbStatsMod {
     val imdbDataSets: ImdbDataSets =
       ImdbDataSets(
         datasetDir = appConfig.files.datasetDir,
-        datasetFileEx = ".tsv",
+        datasetFileEx = "tsv",
         spark = spark
       )
 
