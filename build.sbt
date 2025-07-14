@@ -13,8 +13,7 @@ lazy val compileSettings =
     "-language:existentials",
     "-language:higherKinds",
     "-Ywarn-unused",
-    "-Ywarn-dead-code",
-    "-Ymacro-annotations"
+    "-Ywarn-dead-code"
   )
 
 lazy val sparkIMDbApp = (project in file("imdb-app"))
