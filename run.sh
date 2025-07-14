@@ -41,7 +41,7 @@ echo "JAR_VERSION:    $JAR_VERSION"
 echo "app_target:     ${app_target}"
 echo "assembly_name:  ${assembly_name}"
 
-function submit_app() {
+function run_item() {
   echo "Trying to submit the ${assembly_name}..."
   echo "==========================================================="
   $SPARK_HOME/bin/spark-submit \
@@ -49,7 +49,7 @@ function submit_app() {
     --conf "spark.driver.extraJavaOptions=-Dlog4j2.configurationFile=file:log4j2.xml" \
     --conf "spark.executor.extraJavaOptions=-Dlog4j2.configurationFile=file:log4j2.xml" \
     ${app_target}/${assembly_name}-${JAR_VERSION}.jar $@
-
 }
 
-submit_app
+#run_item "--mod" "Main"
+run_item "--mod" "Samples"
