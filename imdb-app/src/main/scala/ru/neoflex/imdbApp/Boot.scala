@@ -10,6 +10,7 @@ import pureconfig.generic.auto._
 
 import scala.util.Properties
 import ru.neoflex.imdbApp.session.SparkSessionCreator
+import ru.neoflex.imdbApp.app.ingest.PartitionExample
 
 object Boot extends SparkSessionCreator {
   import ru.neoflex.imdbApp.models.config._
@@ -57,22 +58,22 @@ object Boot extends SparkSessionCreator {
 
         case AppModulesEnum.Main =>
           val sparkConf: SparkConf =
-            withKryoSparkConf(
-              withAppNameSparkConf(
+            withKryo(
+              withAppName(
                 new SparkConf,
                 mergedWithCommandLineAppCfg.name
               )
             )
 
           ImdbStatsMod.run(mergedWithCommandLineAppCfg)(
-            getSparkSession(sparkConf)
+            buildSparkSession(sparkConf)
           )
 
         case AppModulesEnum.Samples =>
           val sparkConf: SparkConf =
             withPerExecutorMemory(
-              withKryoSparkConf(
-                withAppNameSparkConf(
+              withKryo(
+                withAppName(
                   new SparkConf(),
                   "Imdb dataset samples generation"
                 )
@@ -81,30 +82,41 @@ object Boot extends SparkSessionCreator {
             )
 
           ImdbSamplesMod.run(mergedWithCommandLineAppCfg)(
-            getSparkSession(sparkConf)
+            buildSparkSession(sparkConf)
           )
 
         case AppModulesEnum.UDAF =>
           val sparkConf: SparkConf =
-            withKryoSparkConf(
-              withAppNameSparkConf(
+            withKryo(
+              withAppName(
                 new SparkConf,
                 "UDAF Kryo Serialization Example"
               )
             )
 
-          UdafExample.run(getSparkSession(sparkConf))
+          UdafExample.run(buildSparkSession(sparkConf))
 
         case AppModulesEnum.UDAFTyped =>
           val sparkConf: SparkConf =
-            withKryoSparkConf(
-              withAppNameSparkConf(
+            withKryo(
+              withAppName(
                 new SparkConf,
                 "UDAF Kryo Serialization Example"
               )
             )
 
-          UdafTypedExample.run(getSparkSession(sparkConf))
+          UdafTypedExample.run(buildSparkSession(sparkConf))
+
+        case AppModulesEnum.PartitionExample =>
+          val sparkConf: SparkConf =
+            withAppName(
+              new SparkConf,
+              "Partition counting example"
+            )
+
+          PartitionExample.run(mergedWithCommandLineAppCfg)(
+            buildSparkSession(sparkConf)
+          )
 
       }
 

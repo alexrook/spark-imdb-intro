@@ -6,10 +6,10 @@ import ru.neoflex.imdbApp.kryo.KryoReg
 
 trait SparkSessionCreator {
 
-  def getSparkSession(sparkConf: SparkConf) =
+  def buildSparkSession(sparkConf: SparkConf) =
     SparkSession.builder().config(sparkConf).getOrCreate()
 
-  def withKryoSparkConf(inital: SparkConf): SparkConf =
+  def withKryo(inital: SparkConf): SparkConf =
     inital
       .set(
         "spark.serializer",
@@ -18,7 +18,7 @@ trait SparkSessionCreator {
       .set("spark.kryo.registrator", classOf[KryoReg].getName())
   // .set("spark.kryo.registrationRequired", true)
 
-  def withAppNameSparkConf(
+  def withAppName(
     initial: SparkConf,
     appName: String
   ): SparkConf =

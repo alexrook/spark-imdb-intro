@@ -4,6 +4,7 @@ import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.Encoder
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.execution.columnar.compression.Encoder
+import org.apache.logging.log4j.LogManager
 
 final case class ImdbDataSets(
   datasetDir:    String,
@@ -12,6 +13,8 @@ final case class ImdbDataSets(
   import ru.neoflex.imdbApp.models._
 
   import spark.implicits._
+
+  val log = LogManager.getLogger(this.getClass())
 
   def getDatasetAbsolutePath(datasetFileName: String) =
     s"${datasetDir}/$datasetFileName.$datasetFileEx"
@@ -133,14 +136,24 @@ final case class ImdbDataSets(
 
   def readIMDBDataset[R: Encoder, T: Encoder](
     fName: String
-  )(f:     R => T): Dataset[T] =
-    spark.read
-      .format("csv")
-      .option("header", "true")
-      .option("delimiter", "\t")
-      .schema(schema = implicitly[Encoder[R]].schema)
-      .load(fName)
-      .as[R]
-      .map(f)
+  )(f:     R => T): Dataset[T] = {
+    val ret =
+      spark.read
+        .format("csv")
+        .option("header", "true")
+        .option("delimiter", "\t")
+        .schema(schema = implicitly[Encoder[R]].schema)
+        .load(fName)
+        .as[R]
+        .map(f)
+
+    log.debug(
+      "For dataset[{}], numPartitions[{}]",
+      fName,
+      ret.rdd.getNumPartitions
+    )
+
+    ret
+  }
 
 }
