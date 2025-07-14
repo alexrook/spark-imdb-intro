@@ -1,5 +1,7 @@
 package ru.neoflex.imdbApp
 
+import org.apache.hadoop.fs.Stat
+
 object SimpleApp {
 
   import org.apache.spark.sql.SparkSession
@@ -28,7 +30,14 @@ object SimpleApp {
 
     val nameBasicsDataset: Dataset[NameBasicItem] =
       readIMDBDataset[NameBasicRow, NameBasicItem](nameBasicRowTSV) {
-        case NameBasicRow(nconst, primaryName, birthYear, deathYear, primaryProfession, titles) =>
+        case NameBasicRow(
+              nconst,
+              primaryName,
+              birthYear,
+              deathYear,
+              primaryProfession,
+              titles
+            ) =>
           NameBasicItem(
             nconst = nconst,
             primaryName = primaryName,
@@ -41,7 +50,16 @@ object SimpleApp {
 
     val titleAkasDataset: Dataset[TitleAkasItem] =
       readIMDBDataset[TitleAkasRow, TitleAkasItem](titleAkasTSV) {
-        case TitleAkasRow(titleId, ordering, title, region, language, types, attributes, isOriginalTitle) =>
+        case TitleAkasRow(
+              titleId,
+              ordering,
+              title,
+              region,
+              language,
+              types,
+              attributes,
+              isOriginalTitle
+            ) =>
           TitleAkasItem(
             titleId = titleId,
             ordering = ordering,
@@ -64,7 +82,8 @@ object SimpleApp {
               isAdult,
               startYear,
               endYear,
-              runtimeMinutes
+              runtimeMinutes,
+              genres
             ) =>
           TitleBasicsItem(
             tconst = tconst,
@@ -74,17 +93,19 @@ object SimpleApp {
             isAdult = isAdult.map(_ > 0),
             startYear = startYear,
             endYear = endYear,
-            runtimeMinutes = runtimeMinutes
+            runtimeMinutes = runtimeMinutes,
+            genres = genres.asList
           )
       }.cache()
 
     val titleCrewDataset: Dataset[TitleCrewItem] =
-      readIMDBDataset[TitleCrewRow, TitleCrewItem](titleCrewTSV) { case TitleCrewRow(tconst, directors, writers) =>
-        TitleCrewItem(
-          tconst = tconst,
-          directors = directors.asList,
-          writers = writers.asList
-        )
+      readIMDBDataset[TitleCrewRow, TitleCrewItem](titleCrewTSV) {
+        case TitleCrewRow(tconst, directors, writers) =>
+          TitleCrewItem(
+            tconst = tconst,
+            directors = directors.asList,
+            writers = writers.asList
+          )
       }.cache()
 
     val titleEpisodeDataset: Dataset[TitleEpisodeItem] =
@@ -107,14 +128,43 @@ object SimpleApp {
     // titleCrewDataset.show()
     // titleEpisodeDataset.show()
     // titlePrincipalsDataset.show()
-    titleRatingsDataset.show()
+    // titleRatingsDataset.show()
 
-    TiteRank(titleRatingsDataset).randRowNum
+    Stats
+      .topNByGenre(
+        genre = "Fantasy",
+        topN = 114,
+        titleRatings = titleRatingsDataset,
+        titleBasic = titleBasicsDataset
+      )
+    //   .show(500)
+
+    Stats
+      .averageRatingsByGenre(
+        titleBasic = titleBasicsDataset,
+        titleRatings = titleRatingsDataset
+      )
+    //.show(500)
+
+    Stats
+      .averageRatingsByActor(
+        nameBasics = nameBasicsDataset,
+        titlePrincipals = titlePrincipalsDataset,
+        titleRatings = titleRatingsDataset,
+        titleBasic = titleBasicsDataset
+      )
+      //.show(100)
+
+    Stats
+      .ratingCount(titleRatings = titleRatingsDataset)
+      .show(500)
 
     spark.stop()
   }
 
-  def readIMDBDataset[R: Encoder, T: Encoder](fName: String)(f: R => T)(implicit spark: SparkSession): Dataset[T] =
+  def readIMDBDataset[R: Encoder, T: Encoder](
+    fName: String
+  )(f:     R => T)(implicit spark: SparkSession): Dataset[T] =
     spark.read
       .format("csv")
       .option("header", "true")
