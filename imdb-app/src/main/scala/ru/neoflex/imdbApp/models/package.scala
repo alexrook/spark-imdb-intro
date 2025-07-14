@@ -67,7 +67,8 @@ package object models {
     isAdult:        Option[Short],
     startYear:      Option[Short],
     endYear:        Option[Short],
-    runtimeMinutes: Option[Short]
+    runtimeMinutes: Option[Short],
+    genres:         String
   )
 
   case class TitleBasicsItem(
@@ -78,7 +79,8 @@ package object models {
     isAdult:        Option[Boolean],
     startYear:      Option[Short],
     endYear:        Option[Short],
-    runtimeMinutes: Option[Short]
+    runtimeMinutes: Option[Short],
+    genres:         List[String]
   )
 
   // title.crew.tsv.gz
