@@ -29,6 +29,33 @@ check_and_prompt_variable() {
   fi
 }
 
+choose_mod() {
+  local choice
+
+  echo "Please enter a run mode [1, 2, or 3]:"
+  echo "1) run Main"
+  echo "2) run Samples"
+  echo "3) run KryEx2"
+
+  read choice
+  
+  case $choice in
+  1)
+    app_mod="Main"
+    ;;
+  2)
+    app_mod="Samples"
+    ;;
+  3)
+    app_mod="KryoEx2"
+    ;;
+  *)
+    echo "Invalid option selected"
+    choose_mod
+    ;;
+  esac
+}
+
 load_env
 check_and_prompt_variable "SPARK_HOME"
 check_and_prompt_variable "SPARK_MASTER"
@@ -51,5 +78,7 @@ function run_item() {
     ${app_target}/${assembly_name}-${JAR_VERSION}.jar $@
 }
 
-#run_item "--mod" "Main"
-run_item "--mod" "Samples"
+choose_mod
+echo "Using mod:" $app_mod
+
+run_item "--mod" ${app_mod}
