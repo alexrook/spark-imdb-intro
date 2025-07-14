@@ -11,7 +11,8 @@ object ImdbStatsApp {
     implicit val spark: SparkSession =
       SparkSession.builder.appName(appConfig.name).getOrCreate()
 
-    val imdbDataSets: ImdbDataSets = ImdbDataSets(appConfig, spark = spark)
+    val imdbDataSets: ImdbDataSets =
+      ImdbDataSets(appConfig.files.datasetDir, spark = spark)
 
     import imdbDataSets._
 

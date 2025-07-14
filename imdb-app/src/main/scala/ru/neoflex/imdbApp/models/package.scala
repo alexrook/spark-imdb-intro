@@ -156,7 +156,7 @@ package object models {
     birthYear:         Option[Short],
     deathYear:         Option[Short],
     primaryProfession: String,
-    titles:            String
+    knownForTitles:            String
   )
 
   case class NameBasicItem(
