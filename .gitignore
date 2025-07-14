@@ -25,6 +25,7 @@ target/
 
 # datasets docker volume
 app-vol/datasets/imdb/*.tsv
+app-vol/datasets/imdb/*.gz
 app-vol/datasets/imdb/*.png
 app-vol/datasets/imdb/samples/*
 
