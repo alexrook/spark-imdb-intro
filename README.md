@@ -105,7 +105,9 @@ SPARK_MASTER=spark://0.0.0.0:7077
 Проект имеет три режима запуска 
 - Main собирает и показывает статистику по наборам данных  IMDB
 - Samples - собирает samples для создания тестовых наборов данных
-- KryoEx2 - эксперименты с Kryo сериализацией
+- UDAF - user defined functions
+- UDAFTyped - user defined functions typed
+- PartitionExample - эксперимент с числом партиций
 
 ### Logging
 
@@ -113,7 +115,7 @@ SPARK_MASTER=spark://0.0.0.0:7077
 
 ### Results
 
-Результаты работы проекта для режимов `Main`, `UDAF`, `UDAFTyped` будут отображены в консоли.
+Результаты работы проекта для режимов `Main`, `UDAF`, `UDAFTyped`, 'PartitionExample' будут отображены в консоли.
 Для режима `Samples` результаты будут сохранены в каталог `app-vol/datasets/imdb/samples`
 
 ## Conclusion
